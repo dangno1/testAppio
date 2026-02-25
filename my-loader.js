@@ -1,5 +1,5 @@
 (function() {
-    const titleEl = document.querySelector("#productTitle");
+    const titleEl = document.querySelector(".product-info-title");
     const productTitle = titleEl ? titleEl.innerText.trim() : "Không tìm thấy Product Title";
 
     const overlay = document.createElement("div");
@@ -36,7 +36,7 @@
     document.getElementById("closePopupBtn").onclick = () => overlay.remove();
 
     setTimeout(function() {
-        const btn = document.querySelector('[data-hook="write-review-button"]');
+        const btn = document.querySelector('#writeReviewButton');
         if (btn) {
             btn.click();
             console.log("Đã click Write a review");
