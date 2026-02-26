@@ -68,8 +68,8 @@
     let clickCount = 0;
     const maxClicks = 10;
     const clickInterval = setInterval(() => {
-        const urlEl = document.getElementById('current-url');
-        if (urlEl) urlEl.textContent = window.location.href;
+        // const urlEl = document.getElementById('current-url');
+        // if (urlEl) urlEl.textContent = window.location.href;
 
         const nextLi = document.querySelector('.a-last');
         const nextBtn = nextLi ? nextLi.querySelector('a') : null;
@@ -82,6 +82,7 @@
 
         if (clickCount < maxClicks) {
             console.log(`Auto-clicking next page (${clickCount + 1}/${maxClicks})`);
+            console.log("Next page URL:", nextBtn.href);
             nextBtn.click();
             clickCount++;
         } else {
