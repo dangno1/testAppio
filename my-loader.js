@@ -99,11 +99,13 @@
 
         if (btn) {
             console.log("Tìm thấy nút Write a review:", btn);
+            const link = btn.tagName === 'A' ? btn : btn.querySelector('a');
 
-            if (btn.tagName === 'A' && btn.href) {
-                console.log("Thực hiện chuyển hướng đến:", btn.href);
-                window.location.href = btn.href;
+            if (link && link.href) {
+                console.log("Thực hiện chuyển hướng đến:", link.href);
+                window.location.href = link.href;
             } else {
+                console.log("Không tìm thấy thẻ link, thử dispatch MouseEvent trên nút");
                 const clickEvent = new MouseEvent('click', {
                     view: window,
                     bubbles: true,
