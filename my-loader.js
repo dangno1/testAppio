@@ -81,7 +81,7 @@
 
         reviewElements.forEach(el => {
             const reviewId = el.id;
-            if (!reviewId || allReviews.some(r => r.reviewId === reviewId)) return;
+            if (!reviewId || allReviews.some(r => r.referrenceId === reviewId)) return;
 
             const name = el.querySelector('.a-profile-name')?.innerText.trim() || "";
             const ratingText = el.querySelector('.review-rating .a-icon-alt')?.innerText || "";
@@ -94,7 +94,28 @@
                 photos.push(img.src);
             });
 
-            allReviews.push({ content, name, photos, rating, reviewId, time });
+            // Identify country from "Reviewed in the [Country] on..." text
+            const countryMatch = time.match(/Reviewed in (?:the )?(.+?) on/);
+            const country = countryMatch ? countryMatch[1] : "";
+
+            allReviews.push({
+                shopOrigin: "test-test-appio.myshopify.com",
+                productId: productId,
+                referrenceId: reviewId,
+                customer: name,
+                country: country,
+                rating: rating,
+                title: name,
+                body: content,
+                createdAt: time,
+                images: photos,
+                originalImages: photos,
+                videos: [],
+                status: "published",
+                source: "amazon",
+                hashId: reviewId,
+                batchId: Date.now().toString(),
+            });
             addedCount++;
         });
 
@@ -157,6 +178,6 @@
                 review: allReviews
             });
         }
-    }, 5000);
+    }, 2000);
 
 })();
