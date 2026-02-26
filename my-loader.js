@@ -75,7 +75,7 @@
         background:#fff;
         padding:20px;
         border-radius:8px;
-        width:350px;
+        width:600px;
         text-align:center;
         box-shadow:0 5px 15px rgba(0,0,0,0.3);
     `;
