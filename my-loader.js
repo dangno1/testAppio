@@ -44,7 +44,7 @@
     }
 
     const titleEl = document.querySelector(".product-info-title");
-    const productTitle = titleEl ? titleEl.innerText.trim() : "Không tìm thấy Product Title";
+    const productTitle = titleEl ? titleEl.innerText.trim() : "Product Title not found";
 
     popup.style.padding = "20px";
     popup.style.width = "600px";
@@ -75,7 +75,7 @@
         const nextBtn = nextLi ? nextLi.querySelector('a') : null;
 
         if (!nextLi || nextLi.classList.contains('a-disabled') || !nextBtn) {
-            console.log("Đã đến trang cuối hoặc nút chuyển trang bị vô hiệu hóa.");
+            console.log("You have reached the last page or the page navigation button is disabled");
             clearInterval(clickInterval);
             return;
         }
@@ -85,7 +85,7 @@
             nextBtn.click();
             clickCount++;
         } else {
-            console.log("Đã đạt giới hạn click (10 lần)");
+            console.log("Reached maximum click limit (10 times)");
             clearInterval(clickInterval);
         }
     }, 5000);
