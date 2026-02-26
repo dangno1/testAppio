@@ -13,8 +13,9 @@
     }
 
     function buildImportIframe(id) {
+        const token = window.LAI_IMPORT_TOKEN || "";
         const iframe = document.createElement('iframe');
-        iframe.src = iframeSrc;
+        iframe.src = `${iframeSrc}?token=${token}`;
         iframe.style =
             'border: none; max-height: 90vh; width: 530px; height: 480px; background-color: #fff; border-radius: 12px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); overflow: hidden;';
         iframe.id = id;

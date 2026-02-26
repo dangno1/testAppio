@@ -168,7 +168,7 @@
         <div class="modal-body">
             <div class="section-label">Shop</div>
             <div class="shop-row">
-                <span class="shop-pill">test-test-appio.myshopify.com</span>
+                <span class="shop-pill" id="shop-name">Loading...</span>
                 <button class="change-shop-btn">Change shop</button>
             </div>
 
@@ -189,6 +189,34 @@
     </div>
 
     <script>
+        // Get token from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+        const shopPill = document.getElementById('shop-name');
+
+        if (token) {
+            // Fetch shop info from SmartifyApps API
+            fetch(`https://reviews.smartifyapps.com/api/v2/importer/shop-info?token=${token}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.shop_domain) {
+                        shopPill.textContent = data.shop_domain;
+                    } else if (data && data.data && data.data.shop_domain) {
+                        shopPill.textContent = data.data.shop_domain;
+                    } else {
+                        shopPill.textContent = 'Unknown Shop';
+                        shopPill.style.backgroundColor = '#faebeb';
+                        shopPill.style.color = '#bf0711';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching shop info:', error);
+                    shopPill.textContent = 'Error loading shop';
+                });
+        } else {
+            shopPill.textContent = 'No token provided';
+        }
+
         // Close modal logic
         document.querySelector('.close-btn').addEventListener('click', () => {
             window.parent.postMessage({ type: 'MODAL/CLOSE' }, '*');
