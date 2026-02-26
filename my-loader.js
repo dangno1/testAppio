@@ -37,47 +37,25 @@
     document.body.appendChild(overlay);
     document.getElementById("closePopupBtn").onclick = () => overlay.remove();
 
-    // setTimeout(function () {
-    //     const btn = document.querySelector('#writeReviewButton') ||
-    //         document.querySelector('[data-hook="write-review-button"]') ||
-    //         document.querySelector('a[href*="/review/create-review"]');
-
-    //     if (btn) {
-    //         console.log("Tìm thấy nút Write a review:", btn);
-    //         const link = btn.tagName === 'A' ? btn : btn.querySelector('a');
-
-    //         if (link && link.href) {
-    //             console.log("Thực hiện chuyển hướng đến:", link.href);
-    //             window.location.href = link.href;
-    //         } else {
-    //             console.log("Không tìm thấy thẻ link, thử dispatch MouseEvent trên nút");
-    //             const clickEvent = new MouseEvent('click', {
-    //                 view: window,
-    //                 bubbles: true,
-    //                 cancelable: true
-    //             });
-    //             btn.dispatchEvent(clickEvent);
-    //         }
-    //     } else {
-    //         console.log("Không tìm thấy nút Write a review. Hãy kiểm tra lại selector.");
-    //     }
-    // }, 5000);
-
-    // Auto-click carousel next button
+    // Auto-click pagination next button
     let clickCount = 0;
     const maxClicks = 10;
     const clickInterval = setInterval(() => {
-        const nextBtn = document.querySelector('.a-carousel-goto-nextpage');
-        if (nextBtn && clickCount < maxClicks) {
-            console.log(`Auto-clicking carousel next button (${clickCount + 1}/${maxClicks})`);
+        const nextLi = document.querySelector('.a-last');
+        const nextBtn = nextLi ? nextLi.querySelector('a') : null;
+
+        if (!nextLi || nextLi.classList.contains('a-disabled') || !nextBtn) {
+            console.log("Đã đến trang cuối hoặc nút chuyển trang bị vô hiệu hóa.");
+            clearInterval(clickInterval);
+            return;
+        }
+
+        if (clickCount < maxClicks) {
+            console.log(`Auto-clicking next page (${clickCount + 1}/${maxClicks})`);
             nextBtn.click();
             clickCount++;
         } else {
-            if (clickCount >= maxClicks) {
-                console.log("Đã đạt giới hạn click carousel (10 lần)");
-            } else {
-                console.log("Không tìm thấy nút carousel next");
-            }
+            console.log("Đã đạt giới hạn click (10 lần)");
             clearInterval(clickInterval);
         }
     }, 5000);
