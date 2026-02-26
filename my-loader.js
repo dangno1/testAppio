@@ -55,7 +55,7 @@
 //     init();
 // })();
 
-(function() {
+(function () {
     const titleEl = document.querySelector(".product-info-title");
     const productTitle = titleEl ? titleEl.innerText.trim() : "Không tìm thấy Product Title";
 
@@ -92,15 +92,28 @@
     document.body.appendChild(overlay);
     document.getElementById("closePopupBtn").onclick = () => overlay.remove();
 
-    setTimeout(function() {
-        const btn = document.querySelector('#writeReviewButton');
-        if (btn) {
-            btn.click();
-            console.log("Đã click Write a review");
-        } else {
-            console.log("Không tìm thấy nút Write a review");
-        }
+    setTimeout(function () {
+        const btn = document.querySelector('#writeReviewButton') ||
+            document.querySelector('[data-hook="write-review-button"]') ||
+            document.querySelector('a[href*="/review/create-review"]');
 
+        if (btn) {
+            console.log("Tìm thấy nút Write a review:", btn);
+
+            if (btn.tagName === 'A' && btn.href) {
+                console.log("Thực hiện chuyển hướng đến:", btn.href);
+                window.location.href = btn.href;
+            } else {
+                const clickEvent = new MouseEvent('click', {
+                    view: window,
+                    bubbles: true,
+                    cancelable: true
+                });
+                btn.dispatchEvent(clickEvent);
+            }
+        } else {
+            console.log("Không tìm thấy nút Write a review. Hãy kiểm tra lại selector.");
+        }
     }, 2000);
 
 })();
