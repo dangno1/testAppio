@@ -1,6 +1,12 @@
 (function () {
     const isSupportedPage = window.location.href.includes("product-reviews");
 
+    // Data Storage
+    const allReviews = [];
+    const importToken = window.LAI_IMPORT_TOKEN || "";
+    const asinMatch = window.location.href.match(/\/product-reviews\/([A-Z0-9]{10})/) || window.location.href.match(/\/dp\/([A-Z0-9]{10})/);
+    const productId = asinMatch ? asinMatch[1] : "N/A";
+
     const overlay = document.createElement("div");
     overlay.style.cssText = `
         position:fixed;
@@ -51,11 +57,16 @@
     popup.style.textAlign = "center";
 
     popup.innerHTML = `
-        <h3>Current URL:</h3>
-        <p id="current-url" style="word-break: break-all; font-size: 12px; color: #666;">${window.location.href}</p>
-        <h3>Product Title:</h3>
-        <p>${productTitle}</p>
-        <button id="closePopupBtn" style="margin-top:15px;padding:8px 12px;cursor:pointer;">
+        <h3 style="margin-bottom: 5px;">Current URL:</h3>
+        <p id="current-url" style="word-break: break-all; font-size: 12px; color: #666; margin-bottom: 15px;">${window.location.href}</p>
+        <h3 style="margin-bottom: 5px;">Product Title:</h3>
+        <p style="margin-bottom: 15px;">${productTitle}</p>
+        
+        <div style="background: #f4f6f8; border-radius: 8px; padding: 15px; margin-bottom: 15px; border: 1px solid #e1e3e5;">
+            <p style="font-size: 16px; font-weight: 600; color: #008060; margin: 0;">Reviews Collected: <span id="review-count">0</span></p>
+        </div>
+
+        <button id="closePopupBtn" style="padding:8px 24px; cursor:pointer; background: #fff; border: 1px solid #babfc3; border-radius: 8px; font-weight: 600;">
             Close
         </button>
     `;
@@ -64,12 +75,55 @@
     document.body.appendChild(overlay);
     document.getElementById("closePopupBtn").onclick = () => overlay.remove();
 
+    function scrapeReviews() {
+        const reviewElements = document.querySelectorAll('[data-hook="review"]');
+        let addedCount = 0;
+
+        reviewElements.forEach(el => {
+            const reviewId = el.id;
+            if (!reviewId || allReviews.some(r => r.reviewId === reviewId)) return;
+
+            const name = el.querySelector('.a-profile-name')?.innerText.trim() || "";
+            const ratingText = el.querySelector('.review-rating .a-icon-alt')?.innerText || "";
+            const rating = parseFloat(ratingText.split(' ')[0]) || 0;
+            const time = el.querySelector('.review-date')?.innerText.trim() || "";
+            const content = el.querySelector('.review-text-content span')?.innerText.trim() || "";
+
+            const photos = [];
+            el.querySelectorAll('.review-image-tile').forEach(img => {
+                photos.push(img.src);
+            });
+
+            allReviews.push({ content, name, photos, rating, reviewId, time });
+            addedCount++;
+        });
+
+        const countEl = document.getElementById('review-count');
+        if (countEl) countEl.textContent = allReviews.length;
+
+        const urlEl = document.getElementById('current-url');
+        if (urlEl) urlEl.textContent = window.location.href;
+
+        if (addedCount > 0) {
+            console.log(`Scraped ${addedCount} new reviews. Total: ${allReviews.length}`);
+            console.log("Current Data Object:", {
+                from: "amazon",
+                importToken,
+                productId,
+                review: allReviews
+            });
+        }
+    }
+
+    // Initial Scrape
+    scrapeReviews();
+
     // Auto-click pagination next button
     let clickCount = 0;
     const maxClicks = 10;
     const clickInterval = setInterval(() => {
-        // const urlEl = document.getElementById('current-url');
-        // if (urlEl) urlEl.textContent = window.location.href;
+        // Scrape before clicking
+        scrapeReviews();
 
         const nextLi = document.querySelector('.a-last');
         const nextBtn = nextLi ? nextLi.querySelector('a') : null;
@@ -77,6 +131,14 @@
         if (!nextLi || nextLi.classList.contains('a-disabled') || !nextBtn) {
             console.log("You have reached the last page or the page navigation button is disabled");
             clearInterval(clickInterval);
+            // Final scrape and log the final object
+            scrapeReviews();
+            console.log("FINAL DATA OBJECT:", {
+                from: "amazon",
+                importToken,
+                productId,
+                review: allReviews
+            });
             return;
         }
 
@@ -88,6 +150,12 @@
         } else {
             console.log("Reached maximum click limit (10 times)");
             clearInterval(clickInterval);
+            console.log("FINAL DATA OBJECT:", {
+                from: "amazon",
+                importToken,
+                productId,
+                review: allReviews
+            });
         }
     }, 5000);
 
