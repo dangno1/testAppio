@@ -81,6 +81,8 @@
     `;
 
     popup.innerHTML = `
+        <h3>Current URL:</h3>
+        <p style="word-break: break-all; font-size: 12px; color: #666;">${window.location.href}</p>
         <h3>Product Title:</h3>
         <p>${productTitle}</p>
         <button id="closePopupBtn" style="margin-top:15px;padding:8px 12px;cursor:pointer;">
@@ -116,6 +118,6 @@
         } else {
             console.log("Không tìm thấy nút Write a review. Hãy kiểm tra lại selector.");
         }
-    }, 2000);
+    }, 5000);
 
 })();
