@@ -104,7 +104,11 @@
 
             const photos = [];
             el.querySelectorAll('.review-image-tile').forEach(img => {
-                photos.push(img.src);
+                let src = img.getAttribute('data-src') || img.src;
+                if (src && !src.includes('grey-pixel.gif')) {
+                    const fullSizeSrc = src.replace(/\._[A-Z0-9]+_\./g, '.');
+                    photos.push(fullSizeSrc);
+                }
             });
 
             const countryMatch = time.match(/Reviewed in (?:the )?(.+?) on/);
@@ -112,6 +116,14 @@
             const helpfulText = el.querySelector('[data-hook="helpful-vote-statement"]')?.innerText.trim() || "";
             const helpfulMatch = helpfulText.match(/(\d+)/);
             const helpful = helpfulMatch ? parseInt(helpfulMatch[1]) : 0;
+
+            const videos = [];
+            el.querySelectorAll('video').forEach(video => {
+                const src = video.getAttribute('src') || video.querySelector('source')?.getAttribute('src');
+                if (src) {
+                    videos.push({ url: src });
+                }
+            });
 
             allReviews.push({
                 shopOrigin: "test-test-appio.myshopify.com",
@@ -125,7 +137,7 @@
                 createdAt: time,
                 images: photos,
                 originalImages: photos,
-                videos: [],
+                videos: videos,
                 status: "published",
                 source: "amazon",
                 hashId: reviewId,
