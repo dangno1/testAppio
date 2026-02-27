@@ -49,11 +49,10 @@
         return;
     }
 
-    if (!window.location.href.includes("sortBy=recent")) {
-        const recentOption = document.querySelector("#sort-order-dropdown_1");
-        if (recentOption) {
-            recentOption.click();
-        }
+    const recentOption = document.querySelector("#sort-order-dropdown_1");
+    if (recentOption) {
+        recentOption.click();
+        console.log("-------------------------------------------abc---------------")
     }
 
     const titleEl = document.querySelector(".product-info-title");
