@@ -49,10 +49,17 @@
         return;
     }
 
-    const recentOption = document.querySelector("#sort-order-dropdown_1");
-    if (recentOption) {
-        recentOption.click();
-        console.log("-------------------------------------------abc---------------")
+    if (!window.location.href.includes("sortBy=recent")) {
+        const sortBtn = document.querySelector("#a-autoid-2-announce");
+        if (sortBtn) {
+            sortBtn.click();
+            setTimeout(() => {
+                const recentOption = document.querySelector("#sort-order-dropdown_1");
+                if (recentOption) {
+                    recentOption.click();
+                }
+            }, 300);
+        }
     }
 
     const titleEl = document.querySelector(".product-info-title");
