@@ -100,7 +100,9 @@
             const ratingText = el.querySelector('.review-rating .a-icon-alt')?.innerText || "";
             const rating = parseFloat(ratingText.split(' ')[0]) || 0;
             const time = el.querySelector('.review-date')?.innerText.trim() || "";
-            const content = el.querySelector('.review-text-content span')?.innerText.trim() || "";
+            const content = el.querySelector('.review-text-content span')?.innerText.trim() 
+            || el.querySelector('.review-text-content .cr-translated-review-content')?.innerText.trim()
+            || el.querySelector('.review-text-content .cr-original-review-content')?.innerText.trim();
 
             const photos = [];
             el.querySelectorAll('.review-image-tile').forEach(img => {
