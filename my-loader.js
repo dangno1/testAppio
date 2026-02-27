@@ -110,11 +110,15 @@
                     photos.push(fullSizeSrc);
                 }
             });
-
             const helpfulText = el.querySelector('[data-hook="helpful-vote-statement"]')?.innerText.trim() || "";
             const helpfulMatch = helpfulText.match(/(\d+)/);
             const helpful = helpfulMatch ? parseInt(helpfulMatch[1]) : 0;
-            const videos = document.querySelector('.video-url')?.value || "";
+
+            const videos = [];
+            el.querySelectorAll('.cr-video-desktop').forEach(v => {
+                const url = v.getAttribute('data-video-url');
+                if (url) videos.push({ url: url });
+            });
 
             allReviews.push({
                 shopOrigin: "test-test-appio.myshopify.com",
