@@ -49,21 +49,10 @@
         return;
     }
 
-    // Sort by recent via UI click instead of URL redirect (to prevent script death)
     if (!window.location.href.includes("sortBy=recent")) {
         const recentOption = document.querySelector("#sort-order-dropdown_1");
         if (recentOption) {
             recentOption.click();
-        } else {
-            const sortBtn = document.querySelector("#a-autoid-3-announce") ||
-                document.querySelector('[data-action="a-dropdown-button"]');
-            if (sortBtn) {
-                sortBtn.click();
-                setTimeout(() => {
-                    const opt = document.querySelector("#sort-order-dropdown_1");
-                    if (opt) opt.click();
-                }, 300);
-            }
         }
     }
 
