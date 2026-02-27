@@ -111,8 +111,6 @@
                 }
             });
 
-            const countryMatch = time.match(/Reviewed in (?:the )?(.+?) on/);
-            const country = countryMatch ? countryMatch[1] : "";
             const helpfulText = el.querySelector('[data-hook="helpful-vote-statement"]')?.innerText.trim() || "";
             const helpfulMatch = helpfulText.match(/(\d+)/);
             const helpful = helpfulMatch ? parseInt(helpfulMatch[1]) : 0;
@@ -130,13 +128,11 @@
                 productId: productId,
                 referrenceId: reviewId,
                 customer: name,
-                country: country,
                 rating: rating,
                 title: name,
                 body: content,
                 createdAt: time,
                 images: photos,
-                originalImages: photos,
                 videos: videos,
                 status: "published",
                 source: "amazon",
