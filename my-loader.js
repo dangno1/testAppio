@@ -118,7 +118,7 @@
             const helpful = helpfulMatch ? parseInt(helpfulMatch[1]) : 0;
 
             const videos = [];
-            el.querySelectorAll('video').forEach(video => {
+            el.querySelectorAll('.vjs-tech').forEach(video => {
                 const src = video.getAttribute('src') || video.querySelector('source')?.getAttribute('src');
                 if (src) {
                     videos.push({ url: src });
