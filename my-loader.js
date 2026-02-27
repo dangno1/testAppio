@@ -49,6 +49,15 @@
         return;
     }
 
+    const recentSortParam = "ref=cm_cr_arp_d_viewopt_srt?pageNumber=1&sortBy=recent";
+    if (!window.location.href.includes("sortBy=recent")) {
+        console.log("Redirecting to recent reviews...");
+        const baseUrl = window.location.href.split('?')[0];
+        const newUrl = baseUrl.endsWith('/') ? baseUrl + recentSortParam : baseUrl + '/' + recentSortParam;
+        window.location.href = newUrl;
+        return;
+    }
+
     const titleEl = document.querySelector(".product-info-title");
     const productTitle = titleEl ? titleEl.innerText.trim() : "Product Title not found";
 
@@ -136,14 +145,12 @@
         }
     }
 
-    // Initial Scrape
     scrapeReviews();
 
     // Auto-click pagination next button
     let clickCount = 0;
     const maxClicks = 10;
     const clickInterval = setInterval(() => {
-        // Scrape before clicking
         scrapeReviews();
 
         const nextLi = document.querySelector('.a-last');
@@ -152,7 +159,6 @@
         if (!nextLi || nextLi.classList.contains('a-disabled') || !nextBtn) {
             console.log("You have reached the last page or the page navigation button is disabled");
             clearInterval(clickInterval);
-            // Final scrape and log the final object
             scrapeReviews();
             console.log("FINAL DATA OBJECT:", {
                 from: "amazon",
