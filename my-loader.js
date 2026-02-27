@@ -100,18 +100,22 @@
             const ratingText = el.querySelector('.review-rating .a-icon-alt')?.innerText || "";
             const rating = parseFloat(ratingText.split(' ')[0]) || 0;
             const time = el.querySelector('.review-date')?.innerText.trim() || "";
-            const content = el.querySelector('.review-text-content span')?.innerText.trim() 
-            || el.querySelector('.review-text-content .cr-translated-review-content')?.innerText.trim()
-            || el.querySelector('.review-text-content .cr-original-review-content')?.innerText.trim();
+            const content = el.querySelector('.review-text-content span')?.innerText.trim()
+                || el.querySelector('.review-text-content .cr-translated-review-content')?.innerText.trim()
+                || el.querySelector('.review-text-content .cr-original-review-content')?.innerText.trim();
+
+            const countryMatch = time.match(/Reviewed in (?:the )?(.+?) on/);
+            const country = countryMatch ? countryMatch[1] : "";
 
             const photos = [];
-            el.querySelectorAll('.review-image-tile').forEach(img => {
+            el.querySelectorAll('[data-hook="review-image-tile"]').forEach(img => {
                 let src = img.getAttribute('data-src') || img.src;
                 if (src && !src.includes('grey-pixel.gif')) {
                     const fullSizeSrc = src.replace(/\._[A-Z0-9]+_\./g, '.');
                     photos.push(fullSizeSrc);
                 }
             });
+
             const helpfulText = el.querySelector('[data-hook="helpful-vote-statement"]')?.innerText.trim() || "";
             const helpfulMatch = helpfulText.match(/(\d+)/);
             const helpful = helpfulMatch ? parseInt(helpfulMatch[1]) : 0;
