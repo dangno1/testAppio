@@ -55,7 +55,7 @@
         const baseUrl = window.location.href.split('?')[0];
         const newUrl = baseUrl.endsWith('/') ? baseUrl + recentSortParam : baseUrl + '/' + recentSortParam;
         window.location.href = newUrl;
-        return;
+        // return;
     }
 
     const titleEl = document.querySelector(".product-info-title");
