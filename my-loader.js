@@ -49,13 +49,22 @@
         return;
     }
 
-    const recentSortParam = "ref=cm_cr_arp_d_viewopt_srt?pageNumber=1&sortBy=recent";
+    // Sort by recent via UI click instead of URL redirect (to prevent script death)
     if (!window.location.href.includes("sortBy=recent")) {
-        console.log("Redirecting to recent reviews...");
-        const baseUrl = window.location.href.split('?')[0];
-        const newUrl = baseUrl.endsWith('/') ? baseUrl + recentSortParam : baseUrl + '/' + recentSortParam;
-        window.location.href = newUrl;
-        // return;
+        const recentOption = document.querySelector("#sort-order-dropdown_1");
+        if (recentOption) {
+            recentOption.click();
+        } else {
+            const sortBtn = document.querySelector("#a-autoid-3-announce") ||
+                document.querySelector('[data-action="a-dropdown-button"]');
+            if (sortBtn) {
+                sortBtn.click();
+                setTimeout(() => {
+                    const opt = document.querySelector("#sort-order-dropdown_1");
+                    if (opt) opt.click();
+                }, 300);
+            }
+        }
     }
 
     const titleEl = document.querySelector(".product-info-title");
