@@ -114,14 +114,7 @@
             const helpfulText = el.querySelector('[data-hook="helpful-vote-statement"]')?.innerText.trim() || "";
             const helpfulMatch = helpfulText.match(/(\d+)/);
             const helpful = helpfulMatch ? parseInt(helpfulMatch[1]) : 0;
-
-            const videos = [];
-            el.querySelectorAll('.video-url').forEach(video => {
-                const src = video.getAttribute('src') || video.querySelector('source')?.getAttribute('src');
-                if (src) {
-                    videos.push({ url: src });
-                }
-            });
+            const videos = document.querySelector('.video-url')?.value || "";
 
             allReviews.push({
                 shopOrigin: "test-test-appio.myshopify.com",
