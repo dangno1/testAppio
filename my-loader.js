@@ -107,9 +107,11 @@
                 photos.push(img.src);
             });
 
-            // Identify country from "Reviewed in the [Country] on..." text
             const countryMatch = time.match(/Reviewed in (?:the )?(.+?) on/);
             const country = countryMatch ? countryMatch[1] : "";
+            const helpfulText = el.querySelector('[data-hook="helpful-vote-statement"]')?.innerText.trim() || "";
+            const helpfulMatch = helpfulText.match(/(\d+)/);
+            const helpful = helpfulMatch ? parseInt(helpfulMatch[1]) : 0;
 
             allReviews.push({
                 shopOrigin: "test-test-appio.myshopify.com",
@@ -128,6 +130,7 @@
                 source: "amazon",
                 hashId: reviewId,
                 batchId: Date.now().toString(),
+                helpful: helpful,
             });
             addedCount++;
         });
