@@ -182,7 +182,6 @@
         }
     }
 
-    // Helper: smooth scroll to element
     function scrollToElement(selector) {
         const el = document.querySelector(selector);
         if (el) {
@@ -199,9 +198,11 @@
     let clickCount = 0;
     const maxClicks = 10;
 
+    let randomTime = Math.floor(Math.random() * (5000 - 1000 + 1)) + 1000;
+
     async function processPage() {
         scrapeReviews();
-        await wait(5000);
+        await wait(randomTime);
         scrapeReviews();
         scrollToElement('.a-last');
         await wait(2000);
