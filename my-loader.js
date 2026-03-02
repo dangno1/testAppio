@@ -182,19 +182,36 @@
         }
     }
 
-    scrapeReviews();
-
-    // Auto-click pagination next button
+    // Helper: smooth scroll to element
+    function scrollToElement(selector) {
+        const el = document.querySelector(selector);
+        if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            console.log(`Scrolled to ${selector}`);
+        } else {
+            console.log(`Element ${selector} not found`);
+        }
+        return el;
+    }
+    function wait(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
     let clickCount = 0;
     const maxClicks = 10;
-    const clickInterval = setInterval(() => {
-        scrapeReviews();
 
+    async function processPage() {
+        scrapeReviews();
+        await wait(5000);
+        scrapeReviews();
+        scrollToElement('.a-last');
+        await wait(2000);
+        scrollToElement('#a-autoid-2-announce');
+        await wait(1000);
         const nextLi = document.querySelector('.a-last');
         const nextBtn = nextLi ? nextLi.querySelector('a') : null;
 
         if (!nextLi || nextLi.classList.contains('a-disabled') || !nextBtn) {
-            clearInterval(clickInterval);
+            console.log("No more pages. Scraping complete.");
             scrapeReviews();
             console.log("FINAL DATA OBJECT:", {
                 from: "amazon",
@@ -206,13 +223,13 @@
         }
 
         if (clickCount < maxClicks) {
-            console.log(`Auto-clicking next page (${clickCount + 1}/${maxClicks})`);
+            clickCount++;
+            console.log(`Auto-clicking next page (${clickCount}/${maxClicks})`);
             console.log("Next page URL:", nextBtn.href);
             nextBtn.click();
-            clickCount++;
+            await wait(3000);
+            processPage();
         } else {
-            console.log("Reached maximum click limit (10 times)");
-            clearInterval(clickInterval);
             console.log("FINAL DATA OBJECT:", {
                 from: "amazon",
                 importToken,
@@ -220,6 +237,7 @@
                 review: allReviews
             });
         }
-    }, 5000);
+    }
+    processPage();
 
 })();
