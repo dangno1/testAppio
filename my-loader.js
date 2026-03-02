@@ -182,43 +182,37 @@
         }
     }
 
-    const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+    scrapeReviews();
 
-    async function processPages() {
-        let clickCount = 0;
-        const maxClicks = 10;
+    // Auto-click pagination next button
+    let clickCount = 0;
+    const maxClicks = 10;
+    const clickInterval = setInterval(() => {
+        scrapeReviews();
 
-        while (clickCount < maxClicks) {
-            const nextLi = document.querySelector('.a-last');
-            if (nextLi) {
-                nextLi.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                await delay(1000);
-            }
+        const nextLi = document.querySelector('.a-last');
+        const nextBtn = nextLi ? nextLi.querySelector('a') : null;
+
+        if (!nextLi || nextLi.classList.contains('a-disabled') || !nextBtn) {
+            clearInterval(clickInterval);
             scrapeReviews();
-            const sortBtn = document.querySelector("#a-autoid-2-announce");
-            if (sortBtn) {
-                sortBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                await delay(1000);
-            }
-
-            const nextBtn = nextLi ? nextLi.querySelector('a') : null;
-            if (!nextLi || nextLi.classList.contains('a-disabled') || !nextBtn) {
-                scrapeReviews();
-                console.log("FINAL DATA OBJECT:", {
-                    from: "amazon",
-                    importToken,
-                    productId,
-                    review: allReviews
-                });
-                break;
-            }
-            await delay(5000);
-            nextBtn.click();
-            clickCount++;
+            console.log("FINAL DATA OBJECT:", {
+                from: "amazon",
+                importToken,
+                productId,
+                review: allReviews
+            });
+            return;
         }
 
-        if (clickCount >= maxClicks) {
+        if (clickCount < maxClicks) {
+            console.log(`Auto-clicking next page (${clickCount + 1}/${maxClicks})`);
+            console.log("Next page URL:", nextBtn.href);
+            nextBtn.click();
+            clickCount++;
+        } else {
             console.log("Reached maximum click limit (10 times)");
+            clearInterval(clickInterval);
             console.log("FINAL DATA OBJECT:", {
                 from: "amazon",
                 importToken,
@@ -226,8 +220,6 @@
                 review: allReviews
             });
         }
-    }
-
-    processPages();
+    }, 5000);
 
 })();
