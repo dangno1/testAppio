@@ -182,38 +182,59 @@
         }
     }
 
-    scrapeReviews();
 
-    // Auto-click pagination next button
-    let clickCount = 0;
-    const maxClicks = 10;
-    const clickInterval = setInterval(() => {
-        scrapeReviews();
+    const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+    const randomRange = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 
-        const nextLi = document.querySelector('.a-last');
-        const nextBtn = nextLi ? nextLi.querySelector('a') : null;
+    async function processPages() {
+        let clickCount = 0;
+        const maxClicks = 10;
 
-        if (!nextLi || nextLi.classList.contains('a-disabled') || !nextBtn) {
-            console.log("You have reached the last page or the page navigation button is disabled");
-            clearInterval(clickInterval);
+        while (clickCount < maxClicks) {
+            // 1. Scroll down to next button
+            const nextLi = document.querySelector('.a-last');
+            if (nextLi) {
+                nextLi.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                await delay(1500);
+            }
+
+            // 2. Scrape reviews
             scrapeReviews();
-            console.log("FINAL DATA OBJECT:", {
-                from: "amazon",
-                importToken,
-                productId,
-                review: allReviews
-            });
-            return;
-        }
 
-        if (clickCount < maxClicks) {
+            // 3. Scroll back up to sort button
+            const sortBtn = document.querySelector("#a-autoid-2-announce");
+            if (sortBtn) {
+                sortBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                await delay(1000);
+            }
+
+            // 4. Check for next button readiness
+            const nextBtn = nextLi ? nextLi.querySelector('a') : null;
+            if (!nextLi || nextLi.classList.contains('a-disabled') || !nextBtn) {
+                console.log("You have reached the last page or the page navigation button is disabled");
+                scrapeReviews();
+                console.log("FINAL DATA OBJECT:", {
+                    from: "amazon",
+                    importToken,
+                    productId,
+                    review: allReviews
+                });
+                break;
+            }
+
+            // 5. Random delay from 2s to 30s
+            const waitTime = randomRange(2000, 30000);
+            console.log(`Waiting ${waitTime / 1000}s before next page...`);
+            await delay(waitTime);
+
+            // 6. Click next
             console.log(`Auto-clicking next page (${clickCount + 1}/${maxClicks})`);
-            console.log("Next page URL:", nextBtn.href);
             nextBtn.click();
             clickCount++;
-        } else {
+        }
+
+        if (clickCount >= maxClicks) {
             console.log("Reached maximum click limit (10 times)");
-            clearInterval(clickInterval);
             console.log("FINAL DATA OBJECT:", {
                 from: "amazon",
                 importToken,
@@ -221,6 +242,8 @@
                 review: allReviews
             });
         }
-    }, 2000);
+    }
+
+    processPages();
 
 })();
