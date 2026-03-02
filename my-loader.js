@@ -125,7 +125,7 @@
             const content = el.querySelector('.review-text-content span')?.innerText.trim()
                 || el.querySelector('.review-text-content .cr-translated-review-content')?.innerText.trim()
                 || el.querySelector('.review-text-content .cr-original-review-content')?.innerText.trim();
-            const titleNew = document.querySelector(".cr-original-review-content")?.innerText;
+            const titleNew = el.querySelector("[data-hook='review-title']")?.innerText.trim() || "";
             const photos = [];
             el.querySelectorAll('[data-hook="review-image-tile"], [data-hook="cmps-review-image-tile"]').forEach(img => {
                 let src = img.getAttribute('data-src') || img.src;
