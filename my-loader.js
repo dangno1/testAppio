@@ -4,7 +4,8 @@
 
     // Data Storage
     const allReviews = [];
-    const importToken = window.LAI_IMPORT_TOKEN || "";
+    const importToken = window.APPIO_IMPORT_TOKEN || "";
+    const shopDomain = window.APPIO_SHOP_DOMAIN || "";
     const asinMatch = window.location.href.match(/\/product-reviews\/([A-Z0-9]{10})/) || window.location.href.match(/\/dp\/([A-Z0-9]{10})/) || window.location.href.match(/\/gp\/product\/([A-Z0-9]{10})/);
     const productId = asinMatch ? asinMatch[1] : "N/A";
 
@@ -12,7 +13,7 @@
     overlay.style.cssText = `
         position:fixed;
         inset:0;
-        background:rgba(0,0,0,0.5);
+        background:rgba(0,0,0,0.3);
         display:flex;
         align-items:center;
         justify-content:center;
@@ -71,6 +72,8 @@
         return;
     }
 
+    // ===== REVIEW PAGE: Show "Prepare to collect reviews" popup =====
+
     if (!window.location.href.includes("sortBy=recent")) {
         const sortBtn = document.querySelector("#a-autoid-2-announce");
         if (sortBtn) {
@@ -84,32 +87,87 @@
         }
     }
 
-    const titleEl = document.querySelector(".product-info-title");
-    const productTitle = titleEl ? titleEl.innerText.trim() : "Product Title not found";
-
-    popup.style.padding = "20px";
-    popup.style.width = "600px";
-    popup.style.textAlign = "center";
+    let selectedProduct = "";
 
     popup.innerHTML = `
-        <h3 style="margin-bottom: 5px;">Current URL:</h3>
-        <p id="current-url" style="word-break: break-all; font-size: 12px; color: #666; margin-bottom: 15px;">${window.location.href}</p>
-        <h3 style="margin-bottom: 5px;">Product Title:</h3>
-        <p style="margin-bottom: 15px;">${productTitle}</p>
-        
-        <div style="background: #f4f6f8; border-radius: 8px; padding: 15px; margin-bottom: 15px; border: 1px solid #e1e3e5;">
-            <p style="font-size: 16px; font-weight: 600; color: #008060; margin: 0;">Reviews Collected: <span id="review-count">0</span></p>
+        <div style="padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e1e3e5;">
+            <span style="font-weight: 600; font-size: 16px; color: #202223;">Prepare to collect reviews</span>
+            <button id="appio-close-btn" style="background:none; border:none; cursor:pointer; padding:4px; color:#5c5f62;">
+                <svg viewBox="0 0 20 20" width="20" fill="currentColor"><path d="M13.97 15.03a.75.75 0 1 0 1.06-1.06L11.06 10l3.97-3.97a.75.75 0 0 0-1.06-1.06L10 8.94 6.03 4.97a.75.75 0 0 0-1.06 1.06L8.94 10l-3.97 3.97a.75.75 0 1 0 1.06 1.06L10 11.06l3.97 3.97z"></path></svg>
+            </button>
         </div>
 
-        <button id="closePopupBtn" style="padding:8px 24px; cursor:pointer; background: #fff; border: 1px solid #babfc3; border-radius: 8px; font-weight: 600;">
-            Close
-        </button>
+        <div style="padding: 20px;">
+            <label style="font-size: 14px; font-weight: 500; color: #202223; display: block; margin-bottom: 8px;">Select product</label>
+            <div style="position: relative;">
+                <svg viewBox="0 0 20 20" width="16" fill="#8c9196" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); pointer-events: none;">
+                    <path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm9.707 4.293-4.82-4.82A5.968 5.968 0 0 0 14 8 6 6 0 0 0 2 8a6 6 0 0 0 6 6 5.968 5.968 0 0 0 3.473-1.113l4.82 4.82a.997.997 0 0 0 1.414 0 .999.999 0 0 0 0-1.414z"></path>
+                </svg>
+                <input id="appio-product-input" type="text" placeholder="Search product"
+                    style="width: 100%; padding: 10px 12px 10px 36px; border: 1px solid #c9cccf; border-radius: 8px; font-size: 14px; color: #202223; outline: none; box-sizing: border-box; transition: border-color 0.15s;">
+            </div>
+
+            <div id="appio-status-area" style="margin-top: 16px; display: none;">
+                <div style="background: #f4f6f8; border-radius: 8px; padding: 12px 16px; border: 1px solid #e1e3e5;">
+                    <p style="font-size: 14px; font-weight: 600; color: #008060; margin: 0;">Reviews Collected: <span id="review-count">0</span></p>
+                </div>
+                <p id="appio-page-status" style="font-size: 12px; color: #6d7175; margin: 8px 0 0 0;"></p>
+            </div>
+        </div>
+
+        <div style="padding: 0 20px 20px; display: flex; justify-content: flex-end;">
+            <button id="appio-start-btn" disabled
+                style="padding: 8px 20px; cursor: not-allowed; background: #e4e5e7; color: #8c9196; border: none; border-radius: 8px; font-weight: 600; font-size: 14px; transition: all 0.15s;">
+                Start
+            </button>
+        </div>
     `;
 
     overlay.appendChild(popup);
     document.body.appendChild(overlay);
-    document.getElementById("closePopupBtn").onclick = () => overlay.remove();
 
+    const closeBtn = document.getElementById("appio-close-btn");
+    const productInput = document.getElementById("appio-product-input");
+    const startBtn = document.getElementById("appio-start-btn");
+    const statusArea = document.getElementById("appio-status-area");
+
+    closeBtn.onclick = () => overlay.remove();
+
+    // Focus styling for input
+    productInput.addEventListener("focus", () => {
+        productInput.style.borderColor = "#005bd3";
+        productInput.style.boxShadow = "0 0 0 2px rgba(0, 91, 211, 0.2)";
+    });
+    productInput.addEventListener("blur", () => {
+        productInput.style.borderColor = "#c9cccf";
+        productInput.style.boxShadow = "none";
+    });
+
+    // Enable/disable Start button based on input
+    productInput.addEventListener("input", () => {
+        selectedProduct = productInput.value.trim();
+        if (selectedProduct.length > 0) {
+            startBtn.disabled = false;
+            startBtn.style.background = "#303030";
+            startBtn.style.color = "#fff";
+            startBtn.style.cursor = "pointer";
+        } else {
+            startBtn.disabled = true;
+            startBtn.style.background = "#e4e5e7";
+            startBtn.style.color = "#8c9196";
+            startBtn.style.cursor = "not-allowed";
+        }
+    });
+
+    // Hover effect for Start button
+    startBtn.addEventListener("mouseenter", () => {
+        if (!startBtn.disabled) startBtn.style.background = "#1a1a1a";
+    });
+    startBtn.addEventListener("mouseleave", () => {
+        if (!startBtn.disabled) startBtn.style.background = "#303030";
+    });
+
+    // ===== Scrape logic =====
     function scrapeReviews() {
         const reviewElements = document.querySelectorAll('[data-hook="review"]');
         let addedCount = 0;
@@ -146,7 +204,7 @@
             });
 
             allReviews.push({
-                shopOrigin: "test-test-appio.myshopify.com",
+                shopOrigin: shopDomain,
                 productId: productId,
                 referrenceId: reviewId,
                 customer: name,
@@ -161,6 +219,7 @@
                 hashId: reviewId,
                 batchId: Date.now().toString(),
                 helpful: helpful,
+                selectedProduct: selectedProduct,
             });
             addedCount++;
         });
@@ -168,15 +227,14 @@
         const countEl = document.getElementById('review-count');
         if (countEl) countEl.textContent = allReviews.length;
 
-        const urlEl = document.getElementById('current-url');
-        if (urlEl) urlEl.textContent = window.location.href;
-
         if (addedCount > 0) {
             console.log(`Scraped ${addedCount} new reviews. Total: ${allReviews.length}`);
             console.log("Current Data Object:", {
                 from: "amazon",
                 importToken,
+                shopDomain,
                 productId,
+                selectedProduct,
                 review: allReviews
             });
         }
@@ -192,50 +250,79 @@
     function wait(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
-    let clickCount = 0;
-    const maxClicks = 10;
 
-    let randomTime = Math.floor(Math.random() * (5000 - 1000 + 1)) + 1000;
+    // ===== START button click → begin scraping =====
+    startBtn.addEventListener("click", async () => {
+        if (startBtn.disabled) return;
 
-    async function processPage() {
-        scrapeReviews();
-        await wait(randomTime);
-        scrapeReviews();
-        scrollToElement('.a-last');
-        await wait(2000);
-        scrollToElement('#a-autoid-2-announce');
-        await wait(1000);
-        const nextLi = document.querySelector('.a-last');
-        const nextBtn = nextLi ? nextLi.querySelector('a') : null;
+        // Disable input & button after starting
+        startBtn.disabled = true;
+        startBtn.textContent = "Collecting...";
+        startBtn.style.background = "#e4e5e7";
+        startBtn.style.color = "#8c9196";
+        startBtn.style.cursor = "not-allowed";
+        productInput.disabled = true;
+        productInput.style.background = "#f6f6f7";
 
-        if (!nextLi || nextLi.classList.contains('a-disabled') || !nextBtn) {
-            console.log("No more pages. Scraping complete.");
+        // Show status area
+        statusArea.style.display = "block";
+
+        let clickCount = 0;
+        const maxClicks = 10;
+        let randomTime = Math.floor(Math.random() * (5000 - 1000 + 1)) + 1000;
+
+        async function processPage() {
+            const pageStatus = document.getElementById("appio-page-status");
+
             scrapeReviews();
-            console.log("FINAL DATA OBJECT:", {
-                from: "amazon",
-                importToken,
-                productId,
-                review: allReviews
-            });
-            return;
+            if (pageStatus) pageStatus.textContent = `Collecting page ${clickCount + 1}... waiting ${(randomTime / 1000).toFixed(1)}s`;
+            await wait(randomTime);
+            scrapeReviews();
+            scrollToElement('.a-last');
+            await wait(2000);
+            scrollToElement('#a-autoid-2-announce');
+            await wait(1000);
+
+            const nextLi = document.querySelector('.a-last');
+            const nextBtn = nextLi ? nextLi.querySelector('a') : null;
+
+            if (!nextLi || nextLi.classList.contains('a-disabled') || !nextBtn) {
+                scrapeReviews();
+                if (pageStatus) pageStatus.textContent = "✅ All pages collected!";
+                startBtn.textContent = "Done";
+                console.log("FINAL DATA OBJECT:", {
+                    from: "amazon",
+                    importToken,
+                    shopDomain,
+                    productId,
+                    selectedProduct,
+                    review: allReviews
+                });
+                return;
+            }
+
+            if (clickCount < maxClicks) {
+                clickCount++;
+                if (pageStatus) pageStatus.textContent = `Going to page ${clickCount + 1}...`;
+                nextBtn.click();
+                randomTime = Math.floor(Math.random() * (5000 - 1000 + 1)) + 1000;
+                await wait(3000);
+                processPage();
+            } else {
+                if (pageStatus) pageStatus.textContent = `✅ Reached max ${maxClicks} pages.`;
+                startBtn.textContent = "Done";
+                console.log("FINAL DATA OBJECT:", {
+                    from: "amazon",
+                    importToken,
+                    shopDomain,
+                    productId,
+                    selectedProduct,
+                    review: allReviews
+                });
+            }
         }
 
-        if (clickCount < maxClicks) {
-            clickCount++;
-            console.log(`Auto-clicking next page (${clickCount}/${maxClicks})`);
-            console.log("Next page URL:", nextBtn.href);
-            nextBtn.click();
-            await wait(3000);
-            processPage();
-        } else {
-            console.log("FINAL DATA OBJECT:", {
-                from: "amazon",
-                importToken,
-                productId,
-                review: allReviews
-            });
-        }
-    }
-    processPage();
+        processPage();
+    });
 
 })();
