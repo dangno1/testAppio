@@ -125,10 +125,7 @@
             const content = el.querySelector('.review-text-content span')?.innerText.trim()
                 || el.querySelector('.review-text-content .cr-translated-review-content')?.innerText.trim()
                 || el.querySelector('.review-text-content .cr-original-review-content')?.innerText.trim();
-
-            const countryMatch = time.match(/Reviewed in (?:the )?(.+?) on/);
-            const country = countryMatch ? countryMatch[1] : "";
-
+            const titleNew = document.querySelector(".cr-original-review-content")?.innerText;
             const photos = [];
             el.querySelectorAll('[data-hook="review-image-tile"], [data-hook="cmps-review-image-tile"]').forEach(img => {
                 let src = img.getAttribute('data-src') || img.src;
@@ -154,7 +151,7 @@
                 referrenceId: reviewId,
                 customer: name,
                 rating: rating,
-                title: name,
+                title: titleNew,
                 body: content,
                 createdAt: time,
                 images: photos,
