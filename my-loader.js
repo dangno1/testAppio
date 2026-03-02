@@ -186,9 +186,6 @@
         const el = document.querySelector(selector);
         if (el) {
             el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            console.log(`Scrolled to ${selector}`);
-        } else {
-            console.log(`Element ${selector} not found`);
         }
         return el;
     }
