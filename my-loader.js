@@ -130,7 +130,7 @@
             const country = countryMatch ? countryMatch[1] : "";
 
             const photos = [];
-            el.querySelectorAll('[data-hook="review-image-tile"]').forEach(img => {
+            el.querySelectorAll('[data-hook="review-image-tile"], [data-hook="cmps-review-image-tile"]').forEach(img => {
                 let src = img.getAttribute('data-src') || img.src;
                 if (src && !src.includes('grey-pixel.gif')) {
                     const fullSizeSrc = src.replace(/\._[A-Z0-9]+_\./g, '.');
