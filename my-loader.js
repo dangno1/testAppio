@@ -104,7 +104,7 @@
                     <path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm9.707 4.293-4.82-4.82A5.968 5.968 0 0 0 14 8 6 6 0 0 0 2 8a6 6 0 0 0 6 6 5.968 5.968 0 0 0 3.473-1.113l4.82 4.82a.997.997 0 0 0 1.414 0 .999.999 0 0 0 0-1.414z"></path>
                 </svg>
                 <input id="appio-product-input" type="text" placeholder="Search product"
-                    style="width: 100%; padding: 10px 12px 10px 36px; border: 1px solid #c9cccf; border-radius: 8px; font-size: 14px; color: #202223; outline: none; box-sizing: border-box; transition: border-color 0.15s;">
+                    style="width: 100%; padding: 10px 12px 10px 12px; border: 1px solid #c9cccf; border-radius: 8px; font-size: 14px; color: #202223; outline: none; box-sizing: border-box; transition: border-color 0.15s;">
             </div>
 
             <div id="appio-status-area" style="margin-top: 16px; display: none;">
@@ -226,18 +226,6 @@
 
         const countEl = document.getElementById('review-count');
         if (countEl) countEl.textContent = allReviews.length;
-
-        // if (addedCount > 0) {
-        //     console.log(`Scraped ${addedCount} new reviews. Total: ${allReviews.length}`);
-        //     console.log("Current Data Object:", {
-        //         from: "amazon",
-        //         importToken,
-        //         shopDomain,
-        //         productId,
-        //         selectedProduct,
-        //         review: allReviews
-        //     });
-        // }
     }
 
     function scrollToElement(selector) {
@@ -306,7 +294,7 @@
                             <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; min-width: 100px;">
                                 <input type="checkbox" id="photo-checkbox" checked
                                     style="width: 23px; height: 18px; accent-color: #008060; cursor: pointer;">
-                                <span style="font-size: 14px; color: #202223;">Photo reviews:</span>
+                                <span style="font-size: 14px; color: #202223;">Text, image, video</span>
                             </label>
                             <span style="font-size: 14px; font-weight: 600; color: #202223; min-width: 30px;">${photoCount}</span>
                             <button class="stats-view-photo" style="background: none; border: 1px solid #c9cccf; border-radius: 6px; padding: 3px 10px; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 4px; color: #202223;">
