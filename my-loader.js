@@ -264,8 +264,7 @@
         const totalReviews = allReviews.length;
 
         // Try to get product info from Amazon page
-        const productTitle = document.querySelector('#cm_cr-product_info .a-link-normal')?.innerText.trim()
-            || document.querySelector('#productTitle')?.innerText.trim()
+        const productTitle = document.querySelector('.product-info-title')?.innerText.trim()
             || selectedProduct || 'Unknown Product';
         const productImg = document.querySelector('#cm_cr-product_info img')?.src
             || document.querySelector('#landingImage')?.src
@@ -306,7 +305,7 @@
                         <div style="display: flex; align-items: center; gap: 12px;">
                             <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; min-width: 100px;">
                                 <input type="checkbox" id="photo-checkbox" checked
-                                    style="width: 18px; height: 18px; accent-color: #008060; cursor: pointer;">
+                                    style="width: 23px; height: 18px; accent-color: #008060; cursor: pointer;">
                                 <span style="font-size: 14px; color: #202223;">Photo reviews:</span>
                             </label>
                             <span style="font-size: 14px; font-weight: 600; color: #202223; min-width: 30px;">${photoCount}</span>
@@ -339,7 +338,6 @@
                     ${productImg ? `<img src="${productImg}" style="width: 40px; height: 40px; border-radius: 6px; object-fit: cover;">` : `<div style="width:40px;height:40px;border-radius:6px;background:#f4f6f8;"></div>`}
                     <div>
                         <div style="font-size: 14px; font-weight: 500; color: #202223; max-width: 380px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${productTitle}</div>
-                        <div style="font-size: 12px; color: #6d7175; margin-top: 2px;">${totalReviews}/1000 imported reviews</div>
                     </div>
                 </div>
             </div>
