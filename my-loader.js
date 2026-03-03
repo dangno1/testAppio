@@ -287,32 +287,50 @@
 
             <div style="padding: 20px;">
                 <div style="font-size: 13px; font-weight: 600; color: #202223; margin-bottom: 12px;">Stats:</div>
-                <div id="stats-rows" style="display: flex; flex-direction: column; gap: 8px;">
-                    ${[5, 4, 3, 2, 1].map(star => `
+                <div id="stats-rows" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0 24px;">
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        ${[5, 4, 3].map(star => `
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; min-width: 100px;">
+                                    <input type="checkbox" class="star-checkbox" data-star="${star}" checked
+                                        style="width: 18px; height: 18px; accent-color: #008060; cursor: pointer;">
+                                    <span style="font-size: 14px; color: #202223;">${star}-star:</span>
+                                </label>
+                                <span style="font-size: 14px; font-weight: 600; color: #202223; min-width: 30px;">${starCounts[star]}</span>
+                                <button class="stats-view-star" data-star="${star}" style="background: none; border: 1px solid #c9cccf; border-radius: 6px; padding: 3px 10px; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 4px; color: #202223;">
+                                    <svg viewBox="0 0 20 20" width="12" fill="currentColor"><path d="M10 3C5 3 1.73 7.11 1 10c.73 2.89 4 7 9 7s8.27-4.11 9-7c-.73-2.89-4-7-9-7zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"></path></svg>
+                                    View
+                                </button>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        ${[2, 1].map(star => `
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; min-width: 100px;">
+                                    <input type="checkbox" class="star-checkbox" data-star="${star}" checked
+                                        style="width: 18px; height: 18px; accent-color: #008060; cursor: pointer;">
+                                    <span style="font-size: 14px; color: #202223;">${star}-star:</span>
+                                </label>
+                                <span style="font-size: 14px; font-weight: 600; color: #202223; min-width: 30px;">${starCounts[star]}</span>
+                                <button class="stats-view-star" data-star="${star}" style="background: none; border: 1px solid #c9cccf; border-radius: 6px; padding: 3px 10px; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 4px; color: #202223;">
+                                    <svg viewBox="0 0 20 20" width="12" fill="currentColor"><path d="M10 3C5 3 1.73 7.11 1 10c.73 2.89 4 7 9 7s8.27-4.11 9-7c-.73-2.89-4-7-9-7zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"></path></svg>
+                                    View
+                                </button>
+                            </div>
+                        `).join('')}
                         <div style="display: flex; align-items: center; gap: 12px;">
                             <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; min-width: 100px;">
-                                <input type="checkbox" class="star-checkbox" data-star="${star}" checked
+                                <input type="checkbox" id="photo-checkbox" checked
                                     style="width: 18px; height: 18px; accent-color: #008060; cursor: pointer;">
-                                <span style="font-size: 14px; color: #202223;">${star}-star:</span>
+                                <span style="font-size: 14px; color: #202223;">Photo reviews:</span>
                             </label>
-                            <span style="font-size: 14px; font-weight: 600; color: #202223; min-width: 40px;">${starCounts[star]}</span>
-                            <button class="stats-view-star" data-star="${star}" style="background: none; border: 1px solid #c9cccf; border-radius: 6px; padding: 3px 10px; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 4px; color: #202223;">
+                            <span style="font-size: 14px; font-weight: 600; color: #202223; min-width: 30px;">${photoCount}</span>
+                            <button class="stats-view-photo" style="background: none; border: 1px solid #c9cccf; border-radius: 6px; padding: 3px 10px; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 4px; color: #202223;">
                                 <svg viewBox="0 0 20 20" width="12" fill="currentColor"><path d="M10 3C5 3 1.73 7.11 1 10c.73 2.89 4 7 9 7s8.27-4.11 9-7c-.73-2.89-4-7-9-7zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"></path></svg>
                                 View
                             </button>
                         </div>
-                    `).join('')}
-                    <div style="display: flex; align-items: center; gap: 12px; margin-top: 4px;">
-                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; min-width: 100px;">
-                            <input type="checkbox" id="photo-checkbox" checked
-                                style="width: 18px; height: 18px; accent-color: #008060; cursor: pointer;">
-                            <span style="font-size: 14px; color: #202223;">Photo reviews:</span>
-                        </label>
-                        <span style="font-size: 14px; font-weight: 600; color: #202223; min-width: 40px;">${photoCount}</span>
-                        <button class="stats-view-photo" style="background: none; border: 1px solid #c9cccf; border-radius: 6px; padding: 3px 10px; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 4px; color: #202223;">
-                            <svg viewBox="0 0 20 20" width="12" fill="currentColor"><path d="M10 3C5 3 1.73 7.11 1 10c.73 2.89 4 7 9 7s8.27-4.11 9-7c-.73-2.89-4-7-9-7zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"></path></svg>
-                            View
-                        </button>
                     </div>
                 </div>
 
