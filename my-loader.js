@@ -251,6 +251,178 @@
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
+    // ===== Show Stats Popup after collection =====
+    function showStatsPopup() {
+        // Calculate stats
+        const starCounts = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+        let photoCount = 0;
+        allReviews.forEach(r => {
+            const s = Math.round(r.rating);
+            if (s >= 1 && s <= 5) starCounts[s]++;
+            if (r.images && r.images.length > 0) photoCount++;
+        });
+        const totalReviews = allReviews.length;
+
+        // Try to get product info from Amazon page
+        const productTitle = document.querySelector('#cm_cr-product_info .a-link-normal')?.innerText.trim()
+            || document.querySelector('#productTitle')?.innerText.trim()
+            || selectedProduct || 'Unknown Product';
+        const productImg = document.querySelector('#cm_cr-product_info img')?.src
+            || document.querySelector('#landingImage')?.src
+            || '';
+
+        popup.innerHTML = `
+            <div style="padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e1e3e5;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="background: #008060; color: #fff; padding: 4px 12px; border-radius: 20px; font-size: 14px; font-weight: 600;">Total reviews collected: ${totalReviews}</span>
+                    <button class="stats-view-all-btn" style="background: none; border: 1px solid #c9cccf; border-radius: 6px; padding: 4px 12px; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 4px; color: #202223;">
+                        <svg viewBox="0 0 20 20" width="14" fill="currentColor"><path d="M10 3C5 3 1.73 7.11 1 10c.73 2.89 4 7 9 7s8.27-4.11 9-7c-.73-2.89-4-7-9-7zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"></path></svg>
+                        View
+                    </button>
+                </div>
+                <button id="stats-close-btn" style="background:none; border:none; cursor:pointer; padding:4px; color:#5c5f62;">
+                    <svg viewBox="0 0 20 20" width="20" fill="currentColor"><path d="M13.97 15.03a.75.75 0 1 0 1.06-1.06L11.06 10l3.97-3.97a.75.75 0 0 0-1.06-1.06L10 8.94 6.03 4.97a.75.75 0 0 0-1.06 1.06L8.94 10l-3.97 3.97a.75.75 0 1 0 1.06 1.06L10 11.06l3.97 3.97z"></path></svg>
+                </button>
+            </div>
+
+            <div style="padding: 20px;">
+                <div style="font-size: 13px; font-weight: 600; color: #202223; margin-bottom: 12px;">Stats:</div>
+                <div id="stats-rows" style="display: flex; flex-direction: column; gap: 8px;">
+                    ${[5, 4, 3, 2, 1].map(star => `
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; min-width: 100px;">
+                                <input type="checkbox" class="star-checkbox" data-star="${star}" checked
+                                    style="width: 18px; height: 18px; accent-color: #008060; cursor: pointer;">
+                                <span style="font-size: 14px; color: #202223;">${star}-star:</span>
+                            </label>
+                            <span style="font-size: 14px; font-weight: 600; color: #202223; min-width: 40px;">${starCounts[star]}</span>
+                            <button class="stats-view-star" data-star="${star}" style="background: none; border: 1px solid #c9cccf; border-radius: 6px; padding: 3px 10px; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 4px; color: #202223;">
+                                <svg viewBox="0 0 20 20" width="12" fill="currentColor"><path d="M10 3C5 3 1.73 7.11 1 10c.73 2.89 4 7 9 7s8.27-4.11 9-7c-.73-2.89-4-7-9-7zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"></path></svg>
+                                View
+                            </button>
+                        </div>
+                    `).join('')}
+                    <div style="display: flex; align-items: center; gap: 12px; margin-top: 4px;">
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; min-width: 100px;">
+                            <input type="checkbox" id="photo-checkbox" checked
+                                style="width: 18px; height: 18px; accent-color: #008060; cursor: pointer;">
+                            <span style="font-size: 14px; color: #202223;">Photo reviews:</span>
+                        </label>
+                        <span style="font-size: 14px; font-weight: 600; color: #202223; min-width: 40px;">${photoCount}</span>
+                        <button class="stats-view-photo" style="background: none; border: 1px solid #c9cccf; border-radius: 6px; padding: 3px 10px; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 4px; color: #202223;">
+                            <svg viewBox="0 0 20 20" width="12" fill="currentColor"><path d="M10 3C5 3 1.73 7.11 1 10c.73 2.89 4 7 9 7s8.27-4.11 9-7c-.73-2.89-4-7-9-7zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"></path></svg>
+                            View
+                        </button>
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px; font-size: 13px; font-weight: 600; color: #202223; margin-bottom: 8px;">Product</div>
+                <div style="border: 1px solid #e1e3e5; border-radius: 8px; padding: 12px; display: flex; align-items: center; gap: 12px;">
+                    ${productImg ? `<img src="${productImg}" style="width: 40px; height: 40px; border-radius: 6px; object-fit: cover;">` : `<div style="width:40px;height:40px;border-radius:6px;background:#f4f6f8;"></div>`}
+                    <div>
+                        <div style="font-size: 14px; font-weight: 500; color: #202223; max-width: 380px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${productTitle}</div>
+                        <div style="font-size: 12px; color: #6d7175; margin-top: 2px;">${totalReviews}/1000 imported reviews</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="padding: 12px 20px 20px; display: flex; justify-content: flex-end;">
+                <button id="stats-import-btn" style="padding: 10px 24px; background: #008060; color: #fff; border: none; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer; transition: background 0.15s;">
+                    Import ${totalReviews} reviews
+                </button>
+            </div>
+        `;
+
+        // Close button
+        document.getElementById('stats-close-btn').onclick = () => overlay.remove();
+
+        // Update import count when checkboxes change
+        function updateImportCount() {
+            const checkedStars = [];
+            document.querySelectorAll('.star-checkbox').forEach(cb => {
+                if (cb.checked) checkedStars.push(parseInt(cb.dataset.star));
+            });
+            const photoChecked = document.getElementById('photo-checkbox')?.checked;
+
+            let count = 0;
+            allReviews.forEach(r => {
+                const s = Math.round(r.rating);
+                const hasPhoto = r.images && r.images.length > 0;
+                if (checkedStars.includes(s)) {
+                    count++;
+                } else if (photoChecked && hasPhoto) {
+                    count++;
+                }
+            });
+
+            const importBtn = document.getElementById('stats-import-btn');
+            if (importBtn) importBtn.textContent = `Import ${count} reviews`;
+        }
+
+        document.querySelectorAll('.star-checkbox').forEach(cb => {
+            cb.addEventListener('change', updateImportCount);
+        });
+        const photoCb = document.getElementById('photo-checkbox');
+        if (photoCb) photoCb.addEventListener('change', updateImportCount);
+
+        // Import button hover
+        const importBtn = document.getElementById('stats-import-btn');
+        if (importBtn) {
+            importBtn.addEventListener('mouseenter', () => importBtn.style.background = '#006e52');
+            importBtn.addEventListener('mouseleave', () => importBtn.style.background = '#008060');
+            importBtn.addEventListener('click', () => {
+                const checkedStars = [];
+                document.querySelectorAll('.star-checkbox').forEach(cb => {
+                    if (cb.checked) checkedStars.push(parseInt(cb.dataset.star));
+                });
+                const photoChecked = document.getElementById('photo-checkbox')?.checked;
+
+                const filteredReviews = allReviews.filter(r => {
+                    const s = Math.round(r.rating);
+                    const hasPhoto = r.images && r.images.length > 0;
+                    return checkedStars.includes(s) || (photoChecked && hasPhoto);
+                });
+
+                console.log('IMPORT DATA:', {
+                    from: 'amazon',
+                    importToken,
+                    shopDomain,
+                    productId,
+                    selectedProduct,
+                    review: filteredReviews
+                });
+
+                importBtn.textContent = 'Importing...';
+                importBtn.disabled = true;
+                importBtn.style.background = '#e4e5e7';
+                importBtn.style.color = '#8c9196';
+                importBtn.style.cursor = 'not-allowed';
+            });
+        }
+
+        // View buttons - log filtered data to console
+        document.querySelectorAll('.stats-view-star').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const star = parseInt(btn.dataset.star);
+                const filtered = allReviews.filter(r => Math.round(r.rating) === star);
+                console.log(`${star}-star reviews (${filtered.length}):`, filtered);
+            });
+        });
+        const viewPhotoBtn = document.querySelector('.stats-view-photo');
+        if (viewPhotoBtn) {
+            viewPhotoBtn.addEventListener('click', () => {
+                const filtered = allReviews.filter(r => r.images && r.images.length > 0);
+                console.log(`Photo reviews (${filtered.length}):`, filtered);
+            });
+        }
+        const viewAllBtn = document.querySelector('.stats-view-all-btn');
+        if (viewAllBtn) {
+            viewAllBtn.addEventListener('click', () => {
+                console.log(`All reviews (${allReviews.length}):`, allReviews);
+            });
+        }
+    }
+
     // ===== START button click → begin scraping =====
     startBtn.addEventListener("click", async () => {
         if (startBtn.disabled) return;
@@ -298,6 +470,7 @@
                     selectedProduct,
                     review: allReviews
                 });
+                showStatsPopup();
                 return;
             }
 
@@ -319,6 +492,7 @@
                     selectedProduct,
                     review: allReviews
                 });
+                showStatsPopup();
             }
         }
 
