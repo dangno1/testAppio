@@ -227,17 +227,17 @@
         const countEl = document.getElementById('review-count');
         if (countEl) countEl.textContent = allReviews.length;
 
-        if (addedCount > 0) {
-            console.log(`Scraped ${addedCount} new reviews. Total: ${allReviews.length}`);
-            console.log("Current Data Object:", {
-                from: "amazon",
-                importToken,
-                shopDomain,
-                productId,
-                selectedProduct,
-                review: allReviews
-            });
-        }
+        // if (addedCount > 0) {
+        //     console.log(`Scraped ${addedCount} new reviews. Total: ${allReviews.length}`);
+        //     console.log("Current Data Object:", {
+        //         from: "amazon",
+        //         importToken,
+        //         shopDomain,
+        //         productId,
+        //         selectedProduct,
+        //         review: allReviews
+        //     });
+        // }
     }
 
     function scrollToElement(selector) {
@@ -303,6 +303,18 @@
                                 </button>
                             </div>
                         `).join('')}
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; min-width: 100px;">
+                                <input type="checkbox" id="photo-checkbox" checked
+                                    style="width: 18px; height: 18px; accent-color: #008060; cursor: pointer;">
+                                <span style="font-size: 14px; color: #202223;">Photo reviews:</span>
+                            </label>
+                            <span style="font-size: 14px; font-weight: 600; color: #202223; min-width: 30px;">${photoCount}</span>
+                            <button class="stats-view-photo" style="background: none; border: 1px solid #c9cccf; border-radius: 6px; padding: 3px 10px; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 4px; color: #202223;">
+                                <svg viewBox="0 0 20 20" width="12" fill="currentColor"><path d="M10 3C5 3 1.73 7.11 1 10c.73 2.89 4 7 9 7s8.27-4.11 9-7c-.73-2.89-4-7-9-7zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"></path></svg>
+                                View
+                            </button>
+                        </div>
                     </div>
                     <div style="display: flex; flex-direction: column; gap: 8px;">
                         ${[2, 1].map(star => `
@@ -319,18 +331,6 @@
                                 </button>
                             </div>
                         `).join('')}
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; min-width: 100px;">
-                                <input type="checkbox" id="photo-checkbox" checked
-                                    style="width: 18px; height: 18px; accent-color: #008060; cursor: pointer;">
-                                <span style="font-size: 14px; color: #202223;">Photo reviews:</span>
-                            </label>
-                            <span style="font-size: 14px; font-weight: 600; color: #202223; min-width: 30px;">${photoCount}</span>
-                            <button class="stats-view-photo" style="background: none; border: 1px solid #c9cccf; border-radius: 6px; padding: 3px 10px; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 4px; color: #202223;">
-                                <svg viewBox="0 0 20 20" width="12" fill="currentColor"><path d="M10 3C5 3 1.73 7.11 1 10c.73 2.89 4 7 9 7s8.27-4.11 9-7c-.73-2.89-4-7-9-7zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"></path></svg>
-                                View
-                            </button>
-                        </div>
                     </div>
                 </div>
 
@@ -418,25 +418,84 @@
             });
         }
 
-        // View buttons - log filtered data to console
+        // Helper: render star icons
+        function renderStars(rating) {
+            const r = Math.round(rating);
+            let html = '';
+            for (let i = 1; i <= 5; i++) {
+                html += `<svg viewBox="0 0 20 20" width="18" fill="${i <= r ? '#e6a817' : '#d9d9d9'}" style="display:inline-block;"><path d="M10 1.3l2.388 6.722H18.8l-5.232 3.948 1.871 6.928L10 14.744l-5.438 4.154 1.87-6.928L1.2 8.022h6.412L10 1.3z"></path></svg>`;
+            }
+            return html;
+        }
+
+        // Show review preview panel
+        function showReviewPreview(reviews, label) {
+            popup.style.width = '620px';
+            popup.innerHTML = `
+                <div style="display: flex; flex-direction: column; height: 520px;">
+                    <div style="padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e1e3e5;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <button id="preview-back-btn" style="background: none; border: none; cursor: pointer; padding: 4px; color: #202223; display: flex; align-items: center;">
+                                <svg viewBox="0 0 20 20" width="20" fill="currentColor"><path d="M17 9H5.414l3.293-3.293a1 1 0 1 0-1.414-1.414l-5 5a1 1 0 0 0 0 1.414l5 5a1 1 0 0 0 1.414-1.414L5.414 11H17a1 1 0 1 0 0-2z"></path></svg>
+                            </button>
+                            <span style="font-weight: 600; font-size: 15px; color: #202223;">Preview</span>
+                            <span style="background: #e3e5e7; color: #202223; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;">${label}</span>
+                        </div>
+                        <button id="preview-close-btn" style="background:none; border:none; cursor:pointer; padding:4px; color:#5c5f62;">
+                            <svg viewBox="0 0 20 20" width="20" fill="currentColor"><path d="M13.97 15.03a.75.75 0 1 0 1.06-1.06L11.06 10l3.97-3.97a.75.75 0 0 0-1.06-1.06L10 8.94 6.03 4.97a.75.75 0 0 0-1.06 1.06L8.94 10l-3.97 3.97a.75.75 0 1 0 1.06 1.06L10 11.06l3.97 3.97z"></path></svg>
+                        </button>
+                    </div>
+                    <div style="padding: 8px 20px; font-size: 13px; color: #6d7175; border-bottom: 1px solid #f1f2f3;">Showing ${reviews.length} of ${reviews.length} reviews</div>
+                    <div style="flex: 1; overflow-y: auto; padding: 0;">
+                        ${reviews.map(r => `
+                            <div style="padding: 16px 20px; border-bottom: 1px solid #f1f2f3;">
+                                <div style="margin-bottom: 6px;">${renderStars(r.rating)}</div>
+                                ${r.body ? `<div style="font-size: 14px; color: #202223; line-height: 1.5; margin-bottom: 8px;">${r.body}</div>` : ''}
+                                <div style="font-size: 12px; color: #6d7175;">${r.customer}${r.createdAt ? '  •  ' + r.createdAt : ''}</div>
+                                ${r.images && r.images.length > 0 ? `<div style="display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap;">${r.images.map(img => `<img src="${img}" style="width: 48px; height: 48px; object-fit: cover; border-radius: 6px; border: 1px solid #e1e3e5;">`).join('')}</div>` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div style="padding: 12px 20px; border-top: 1px solid #e1e3e5; display: flex; justify-content: flex-end;">
+                        <button id="preview-import-btn" style="padding: 8px 20px; background: #303030; color: #fff; border: none; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer;">Import all</button>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('preview-back-btn').onclick = () => {
+                popup.style.width = '500px';
+                showStatsPopup();
+            };
+            document.getElementById('preview-close-btn').onclick = () => overlay.remove();
+            document.getElementById('preview-import-btn').addEventListener('click', function () {
+                console.log('IMPORT PREVIEW DATA:', { from: 'amazon', importToken, shopDomain, productId, selectedProduct, review: reviews });
+                this.textContent = 'Importing...';
+                this.disabled = true;
+                this.style.background = '#e4e5e7';
+                this.style.color = '#8c9196';
+                this.style.cursor = 'not-allowed';
+            });
+        }
+
+        // View buttons - show preview panel
         document.querySelectorAll('.stats-view-star').forEach(btn => {
             btn.addEventListener('click', () => {
                 const star = parseInt(btn.dataset.star);
                 const filtered = allReviews.filter(r => Math.round(r.rating) === star);
-                console.log(`${star}-star reviews (${filtered.length}):`, filtered);
+                showReviewPreview(filtered, `${star}-star`);
             });
         });
         const viewPhotoBtn = document.querySelector('.stats-view-photo');
         if (viewPhotoBtn) {
             viewPhotoBtn.addEventListener('click', () => {
                 const filtered = allReviews.filter(r => r.images && r.images.length > 0);
-                console.log(`Photo reviews (${filtered.length}):`, filtered);
+                showReviewPreview(filtered, 'Photo reviews');
             });
         }
         const viewAllBtn = document.querySelector('.stats-view-all-btn');
         if (viewAllBtn) {
             viewAllBtn.addEventListener('click', () => {
-                console.log(`All reviews (${allReviews.length}):`, allReviews);
+                showReviewPreview(allReviews, 'All reviews');
             });
         }
     }
