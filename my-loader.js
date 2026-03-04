@@ -185,13 +185,15 @@
         const count = [];
         const histogramRows = document.querySelectorAll('#histogramTable li.a-align-center');
         histogramRows.forEach(row => {
-            const pctEl = row.querySelector('.aok-nowrap span');
-            if (pctEl) {
-                count.push(pctEl.innerText.trim());
+            const link = row.querySelector('a.histogram-row-container');
+            const ariaLabel = link?.getAttribute('aria-label') || "";
+            const pctMatch = ariaLabel.match(/(\d+%)/);
+            if (pctMatch) {
+                count.push(pctMatch[1]);
             }
         });
 
-        reviewSummary = { totalRatings, average, count };
+        reviewSummary = { totalRatings, average, count: count.reverse() };
     }
 
     // ===== Scrape logic =====
