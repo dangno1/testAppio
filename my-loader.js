@@ -279,7 +279,7 @@
                         ${[5, 4, 3].map(star => `
                             <div style="display: flex; align-items: center; gap: 12px;">
                                 <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; min-width: 100px;">
-                                    <input type="checkbox" class="star-checkbox" data-star="${star}" checked
+                                    <input type="checkbox" class="star-checkbox" data-star="${star}" ${starCounts[star] > 0 ? 'checked' : ''}
                                         style="width: 18px; height: 18px; accent-color: #008060; cursor: pointer;">
                                     <span style="font-size: 14px; color: #202223;">${star}-star:</span>
                                 </label>
@@ -307,7 +307,7 @@
                         ${[2, 1].map(star => `
                             <div style="display: flex; align-items: center; gap: 12px;">
                                 <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; min-width: 100px;">
-                                    <input type="checkbox" class="star-checkbox" data-star="${star}" checked
+                                    <input type="checkbox" class="star-checkbox" data-star="${star}" ${starCounts[star] > 0 ? 'checked' : ''}
                                         style="width: 18px; height: 18px; accent-color: #008060; cursor: pointer;">
                                     <span style="font-size: 14px; color: #202223;">${star}-star:</span>
                                 </label>
@@ -433,12 +433,19 @@
                     </div>
                     <div style="padding: 8px 20px; font-size: 13px; color: #6d7175; border-bottom: 1px solid #f1f2f3;">Showing ${reviews.length} of ${reviews.length} reviews</div>
                     <div style="flex: 1; overflow-y: auto; padding: 0;">
-                        ${reviews.map(r => `
-                            <div style="padding: 16px 20px; border-bottom: 1px solid #f1f2f3;">
-                                <div style="margin-bottom: 6px;">${renderStars(r.rating)}</div>
-                                ${r.body ? `<div style="font-size: 14px; color: #202223; line-height: 1.5; margin-bottom: 8px;">${r.body}</div>` : ''}
-                                <div style="font-size: 12px; color: #6d7175;">${r.customer}${r.createdAt ? '  •  ' + r.createdAt : ''}</div>
-                                ${r.images && r.images.length > 0 ? `<div style="display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap;">${r.images.map(img => `<img src="${img}" style="width: 48px; height: 48px; object-fit: cover; border-radius: 6px; border: 1px solid #e1e3e5;">`).join('')}</div>` : ''}
+                        ${reviews.map((r, idx) => `
+                            <div style="padding: 16px 20px; border-bottom: 1px solid #f1f2f3; position: relative;">
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                    <div style="flex: 1;">
+                                        <div style="margin-bottom: 6px;">${renderStars(r.rating)}</div>
+                                        ${r.body ? `<div style="font-size: 14px; color: #202223; line-height: 1.5; margin-bottom: 8px;">${r.body}</div>` : ''}
+                                        <div style="font-size: 12px; color: #6d7175;">${r.customer}${r.createdAt ? '  •  ' + r.createdAt : ''}</div>
+                                        ${r.images && r.images.length > 0 ? `<div style="display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap;">${r.images.map(img => `<img src="${img}" style="width: 48px; height: 48px; object-fit: cover; border-radius: 6px; border: 1px solid #e1e3e5;">`).join('')}</div>` : ''}
+                                    </div>
+                                    <button class="review-delete-btn" data-review-id="${r.referrenceId || r.hashId}" style="background: none; border: none; cursor: pointer; padding: 6px; border-radius: 6px; color: #8c9196; flex-shrink: 0; margin-left: 8px; transition: all 0.15s;" title="Remove review">
+                                        <svg viewBox="0 0 20 20" width="18" height="18" fill="currentColor"><path d="M8 3.994C8 2.893 8.895 2 10 2s2 .893 2 1.994h4.005c.55 0 .995.448.995.997a.998.998 0 0 1-.995.997H3.995A.999.999 0 0 1 3 4.991c0-.55.445-.997.995-.997H8zM4.5 7h11l-.873 9.186A1.5 1.5 0 0 1 13.136 17.5H6.864a1.5 1.5 0 0 1-1.491-1.314L4.5 7zM8.5 9.5a.5.5 0 0 0-1 0v5a.5.5 0 0 0 1 0v-5zm4 0a.5.5 0 0 0-1 0v5a.5.5 0 0 0 1 0v-5z"></path></svg>
+                                    </button>
+                                </div>
                             </div>
                         `).join('')}
                     </div>
@@ -453,6 +460,23 @@
                 showStatsPopup();
             };
             document.getElementById('preview-close-btn').onclick = () => overlay.remove();
+
+            // Delete review buttons
+            document.querySelectorAll('.review-delete-btn').forEach(btn => {
+                btn.addEventListener('mouseenter', () => { btn.style.color = '#d72c0d'; btn.style.background = '#fff4f4'; });
+                btn.addEventListener('mouseleave', () => { btn.style.color = '#8c9196'; btn.style.background = 'none'; });
+                btn.addEventListener('click', () => {
+                    const reviewId = btn.dataset.reviewId;
+                    const idx = allReviews.findIndex(r => (r.referrenceId || r.hashId) === reviewId);
+                    if (idx !== -1) {
+                        allReviews.splice(idx, 1);
+                        // Re-filter and re-render preview
+                        const currentReviews = reviews.filter(r => allReviews.some(a => (a.referrenceId || a.hashId) === (r.referrenceId || r.hashId)));
+                        showReviewPreview(currentReviews, label);
+                    }
+                });
+            });
+
             document.getElementById('preview-import-btn').addEventListener('click', function () {
                 console.log('IMPORT PREVIEW DATA:', { from: 'amazon', importToken, shopDomain, productId, selectedProduct, review: reviews });
                 this.textContent = 'Importing...';
