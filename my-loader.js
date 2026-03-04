@@ -575,7 +575,7 @@
 
             if (!nextLi || nextLi.classList.contains('a-disabled') || !nextBtn) {
                 scrapeReviews();
-                if (pageStatus) pageStatus.textContent = "✅ All pages collected!";
+                if (pageStatus) pageStatus.textContent = "All pages collected!";
                 startBtn.textContent = "Done";
                 console.log("FINAL DATA OBJECT:", {
                     from: "amazon",
@@ -583,7 +583,8 @@
                     shopDomain,
                     productId,
                     selectedProduct,
-                    review: allReviews
+                    review: allReviews,
+                    reviewSummary
                 });
                 showStatsPopup();
                 return;
