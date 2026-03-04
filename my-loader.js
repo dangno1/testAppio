@@ -169,17 +169,17 @@
     });
 
     function scrapeReviewSummary() {
-        // Total ratings (e.g. "4,800 global ratings")
+        // Total ratings (e.g. "4,800" or "4 800" or "4.800" global ratings)
         const totalEl = document.querySelector('[data-hook="total-review-count"]');
         const totalText = totalEl?.innerText?.trim() || "";
-        const totalMatch = totalText.match(/([\d,\.]+)/);
-        const totalRatings = totalMatch ? totalMatch[1] : "0";
+        const totalMatch = totalText.match(/([\d\s.,\u00A0]+)/);
+        const totalRatings = totalMatch ? totalMatch[1].replace(/[\s.,\u00A0]/g, '') : "0";
 
-        // Average rating (e.g. "4.5 out of 5")
+        // Average rating (e.g. "4.5 out of 5" or "4,5 out of 5")
         const avgEl = document.querySelector('[data-hook="rating-out-of-text"]');
         const avgText = avgEl?.innerText?.trim() || "";
-        const avgMatch = avgText.match(/([\d\.]+)/);
-        const average = avgMatch ? avgMatch[1] : "0";
+        const avgMatch = avgText.match(/([\d][,.][\d])/);
+        const average = avgMatch ? avgMatch[1].replace(',', '.') : "0";
 
         // Star percentage breakdown (5-star to 1-star)
         const count = [];
@@ -465,7 +465,7 @@
                     <div style="flex: 1; overflow-y: auto; padding: 0;">
                         ${reviews.map((r, idx) => `
                             <div style="padding: 16px 20px; border-bottom: 1px solid #f1f2f3; position: relative;">
-                                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
                                     <div style="flex: 1;">
                                         <div style="margin-bottom: 6px;">${renderStars(r.rating)}</div>
                                         ${r.body ? `<div style="font-size: 14px; color: #202223; line-height: 1.5; margin-bottom: 8px;">${r.body}</div>` : ''}
