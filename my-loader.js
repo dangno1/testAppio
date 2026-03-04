@@ -4,6 +4,7 @@
 
     // Data Storage
     const allReviews = [];
+    let reviewSummary = { totalRatings: "", average: "", count: [] };
     const importToken = window.APPIO_IMPORT_TOKEN || "";
     const shopDomain = window.APPIO_SHOP_DOMAIN || "";
     const asinMatch = window.location.href.match(/\/product-reviews\/([A-Z0-9]{10})/) || window.location.href.match(/\/dp\/([A-Z0-9]{10})/) || window.location.href.match(/\/gp\/product\/([A-Z0-9]{10})/);
@@ -167,8 +168,35 @@
         if (!startBtn.disabled) startBtn.style.background = "#303030";
     });
 
+    function scrapeReviewSummary() {
+        // Total ratings (e.g. "4,800 global ratings")
+        const totalEl = document.querySelector('[data-hook="total-review-count"]');
+        const totalText = totalEl?.innerText?.trim() || "";
+        const totalMatch = totalText.match(/([\d,\.]+)/);
+        const totalRatings = totalMatch ? totalMatch[1] : "0";
+
+        // Average rating (e.g. "4.5 out of 5")
+        const avgEl = document.querySelector('[data-hook="rating-out-of-text"]');
+        const avgText = avgEl?.innerText?.trim() || "";
+        const avgMatch = avgText.match(/([\d\.]+)/);
+        const average = avgMatch ? avgMatch[1] : "0";
+
+        // Star percentage breakdown (5-star to 1-star)
+        const count = [];
+        const histogramRows = document.querySelectorAll('#histogramTable li.a-align-center');
+        histogramRows.forEach(row => {
+            const pctEl = row.querySelector('.aok-nowrap span');
+            if (pctEl) {
+                count.push(pctEl.innerText.trim());
+            }
+        });
+
+        reviewSummary = { totalRatings, average, count };
+    }
+
     // ===== Scrape logic =====
     function scrapeReviews() {
+        scrapeReviewSummary();
         const reviewElements = document.querySelectorAll('[data-hook="review"]');
         let addedCount = 0;
 
@@ -293,7 +321,7 @@
                         <div style="display: flex; align-items: center; gap: 12px;">
                             <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; min-width: 100px;">
                                 <input type="checkbox" id="photo-checkbox" checked
-                                    style="width: 23px; height: 18px; accent-color: #008060; cursor: pointer;">
+                                    style="width: 31px; height: 18px; accent-color: #008060; cursor: pointer;">
                                 <span style="font-size: 14px; color: #202223;">Text, image, video</span>
                             </label>
                             <span style="font-size: 14px; font-weight: 600; color: #202223; min-width: 30px;">${photoCount}</span>
@@ -569,7 +597,7 @@
                 await wait(3000);
                 processPage();
             } else {
-                if (pageStatus) pageStatus.textContent = `✅ Reached max ${maxClicks} pages.`;
+                if (pageStatus) pageStatus.textContent = `Reached max ${maxClicks} pages.`;
                 startBtn.textContent = "Done";
                 console.log("FINAL DATA OBJECT:", {
                     from: "amazon",
@@ -577,7 +605,8 @@
                     shopDomain,
                     productId,
                     selectedProduct,
-                    review: allReviews
+                    review: allReviews,
+                    reviewSummary
                 });
                 showStatsPopup();
             }
