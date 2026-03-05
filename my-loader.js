@@ -1,4 +1,6 @@
 (function () {
+    // Prevent duplicate popups
+    if (document.getElementById('appio-overlay')) return;
     const isReviewPage = window.location.href.includes("product-reviews");
     const isDetailPage = window.location.href.includes("/dp/") || window.location.href.includes("/gp/product/");
 
@@ -11,6 +13,7 @@
     const productId = asinMatch ? asinMatch[1] : "N/A";
 
     const overlay = document.createElement("div");
+    overlay.id = "appio-overlay";
     overlay.style.cssText = `
         position:fixed;
         inset:0;
