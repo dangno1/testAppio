@@ -325,8 +325,15 @@
             return `
                                 <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
                                     <div style="display: flex; align-items: center; gap: 8px;">
-                                        <input type="checkbox" class="star-checkbox" data-star="${star}" ${starCounts[star] > 0 ? 'checked' : ''}
-                                            style="width: 18px; height: 18px; accent-color: #828282; cursor: pointer; border: 1px solid #c9cccf; border-radius: 4px;">
+                                        <label style="display: flex; align-items: center; cursor: pointer; position: relative; width: 18px; height: 18px;">
+                                            <input type="checkbox" class="star-checkbox" data-star="${star}" ${starCounts[star] > 0 ? 'checked' : ''}
+                                                style="position: absolute; opacity: 0; width: 100%; height: 100%; cursor: pointer; margin: 0; z-index: 2;">
+                                            <div class="checkbox-visual" style="position: absolute; top:0; left:0; width: 16px; height: 16px; border: 1px solid #c9cccf; border-radius: 4px; background: ${starCounts[star] > 0 ? '#828282' : '#fff'}; display: flex; align-items: center; justify-content: center; z-index: 1; transition: all 0.2s;">
+                                                <svg viewBox="0 0 20 20" fill="none" stroke="#fff" stroke-width="1.2" style="width: 12px; height: 12px; display: ${starCounts[star] > 0 ? 'block' : 'none'};">
+                                                    <path d="M4 10l4 4 8-8" stroke-linecap="round" stroke-linejoin="round"/>
+                                                </svg>
+                                            </div>
+                                        </label>
                                         <div style="display: flex; align-items: center; width: 75px;">${starsHtml}</div>
                                     </div>
                                     <div style="display: flex; align-items: center; gap: 8px; flex: 1; justify-content: flex-end;">
@@ -357,7 +364,16 @@
         function updateImportCount() {
             const checkedStars = [];
             document.querySelectorAll('.star-checkbox').forEach(cb => {
-                if (cb.checked) checkedStars.push(parseInt(cb.dataset.star));
+                const visual = cb.parentElement.querySelector('.checkbox-visual');
+                const svg = visual?.querySelector('svg');
+                if (cb.checked) {
+                    checkedStars.push(parseInt(cb.dataset.star));
+                    if (visual) visual.style.background = '#828282';
+                    if (svg) svg.style.display = 'block';
+                } else {
+                    if (visual) visual.style.background = '#fff';
+                    if (svg) svg.style.display = 'none';
+                }
             });
 
             let count = 0;
@@ -379,7 +395,7 @@
         // Import button hover
         const importBtn = document.getElementById('stats-import-btn');
         if (importBtn) {
-            importBtn.addEventListener('mouseenter', () => importBtn.style.background = '#006e52');
+            importBtn.addEventListener('mouseenter', () => importBtn.style.background = '#828282');
             importBtn.addEventListener('mouseleave', () => importBtn.style.background = '#003366');
             importBtn.addEventListener('click', () => {
                 const checkedStars = [];
