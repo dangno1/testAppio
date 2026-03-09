@@ -318,7 +318,7 @@
                 <div style="font-size: 13px; color: #202223; margin: 5px 0px;">Stats:</div>
                 <div id="stats-rows" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0 24px;">
                     <div style="display: flex; flex-direction: column; gap: 8px;">
-                        ${[5, 4, 3].map(star => {
+                        ${[5, 4, 3, 2, 1].map(star => {
             let starsHtml = '';
             for (let i = 1; i <= 5; i++) {
                 starsHtml += `<svg viewBox="0 0 20 20" width="14" height="14" fill="${i <= star ? '#e6a817' : '#d9d9d9'}" style="display:inline-block;vertical-align:middle;"><path d="M10 1.3l2.388 6.722H18.8l-5.232 3.948 1.871 6.928L10 14.744l-5.438 4.154 1.87-6.928L1.2 8.022h6.412L10 1.3z"></path></svg>`;
@@ -337,26 +337,6 @@
                             </div>
                         `}).join('')}
 
-                    </div>
-                    <div style="display: flex; flex-direction: column; gap: 8px;">
-                        ${[2, 1].map(star => {
-                let starsHtml = '';
-                for (let i = 1; i <= 5; i++) {
-                    starsHtml += `<svg viewBox="0 0 20 20" width="14" height="14" fill="${i <= star ? '#e6a817' : '#d9d9d9'}" style="display:inline-block;vertical-align:middle;"><path d="M10 1.3l2.388 6.722H18.8l-5.232 3.948 1.871 6.928L10 14.744l-5.438 4.154 1.87-6.928L1.2 8.022h6.412L10 1.3z"></path></svg>`;
-                }
-                return `
-                            <div style="display: flex; align-items: center;">
-                                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; min-width: 120px;">
-                                    <input type="checkbox" class="star-checkbox" data-star="${star}" ${starCounts[star] > 0 ? 'checked' : ''}
-                                        style="width: 18px; height: 18px; accent-color: #003366; cursor: pointer;">
-                                    <span style="display:inline-flex;align-items:center;gap:1px;">${starsHtml}</span>
-                                </label>
-                                <span style="font-size: 14px; font-weight: 600; color: #202223; min-width: 30px;">${starCounts[star]}</span>
-                                <button class="stats-view-star" data-star="${star}" style="background: none; border: 1px solid #c9cccf; border-radius: 6px; padding: 3px 10px; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 4px; color: #202223;">
-                                    <svg viewBox="0 0 20 20" width="12" fill="currentColor"><path d="M10 3C5 3 1.73 7.11 1 10c.73 2.89 4 7 9 7s8.27-4.11 9-7c-.73-2.89-4-7-9-7zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"></path></svg>
-                                </button>
-                            </div>
-                        `}).join('')}
                     </div>
                 </div>
                 </div>
