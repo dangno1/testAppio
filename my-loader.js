@@ -303,15 +303,18 @@
                     <svg viewBox="0 0 20 20" width="20" fill="currentColor"><path d="M13.97 15.03a.75.75 0 1 0 1.06-1.06L11.06 10l3.97-3.97a.75.75 0 0 0-1.06-1.06L10 8.94 6.03 4.97a.75.75 0 0 0-1.06 1.06L8.94 10l-3.97 3.97a.75.75 0 1 0 1.06 1.06L10 11.06l3.97 3.97z"></path></svg>
                 </button>
             </div>
-            <div>
+
             <div style="padding: 10px 20px 20px 20px;">
-                <div style="font-size: 13px; color: #202223; margin-bottom: 6px;">Product:</div>
-                <div style="border: 1px solid #e1e3e5; border-radius: 8px; padding: 12px; display: flex; align-items: center;">
-                    ${productImg ? `<img src="${productImg}" style="width: 40px; height: 40px; border-radius: 6px; object-fit: cover;">` : `<div style="width:40px;height:40px;border-radius:6px;background:#f4f6f8;"></div>`}
-                    <div>
-                        <div style="font-size: 14px; font-weight: 500; color: #202223; max-width: 380px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${productTitle}</div>
+                <div>
+                    <div style="font-size: 13px; color: #202223; margin-bottom: 6px;">Product:</div>
+                    <div style="border: 1px solid #e1e3e5; border-radius: 8px; padding: 12px; display: flex; align-items: center;">
+                        ${productImg ? `<img src="${productImg}" style="width: 40px; height: 40px; border-radius: 6px; object-fit: cover;">` : `<div style="width:40px;height:40px;border-radius:6px;background:#f4f6f8;"></div>`}
+                        <div>
+                            <div style="font-size: 14px; font-weight: 500; color: #202223; max-width: 380px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${productTitle}</div>
+                        </div>
                     </div>
                 </div>
+                <div>
                 <div style="font-size: 13px; color: #202223; margin: 5px 0px;">Stats:</div>
                 <div id="stats-rows" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0 24px;">
                     <div style="display: flex; flex-direction: column; gap: 8px;">
@@ -356,7 +359,7 @@
                         `}).join('')}
                     </div>
                 </div>
-            </div>
+                </div>
             </div>
 
             <div style="padding: 12px 20px 20px; display: flex; justify-content: flex-end;">
