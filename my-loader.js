@@ -297,14 +297,13 @@
                     <span style="background: #003366; color: #fff; padding: 4px 12px; border-radius: 20px; font-size: 14px; font-weight: 600;">Total reviews collected: ${totalReviews}</span>
                     <button class="stats-view-all-btn" style="background: none; border: 1px solid #c9cccf; border-radius: 6px; padding: 4px 12px; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 4px; color: #202223;">
                         <svg viewBox="0 0 20 20" width="14" fill="currentColor"><path d="M10 3C5 3 1.73 7.11 1 10c.73 2.89 4 7 9 7s8.27-4.11 9-7c-.73-2.89-4-7-9-7zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"></path></svg>
-                        View
                     </button>
                 </div>
                 <button id="stats-close-btn" style="background:none; border:none; cursor:pointer; padding:4px; color:#5c5f62;">
                     <svg viewBox="0 0 20 20" width="20" fill="currentColor"><path d="M13.97 15.03a.75.75 0 1 0 1.06-1.06L11.06 10l3.97-3.97a.75.75 0 0 0-1.06-1.06L10 8.94 6.03 4.97a.75.75 0 0 0-1.06 1.06L8.94 10l-3.97 3.97a.75.75 0 1 0 1.06 1.06L10 11.06l3.97 3.97z"></path></svg>
                 </button>
             </div>
-
+            <div>
             <div style="padding: 10px 20px 20px 20px;">
                 <div style="font-size: 13px; color: #202223; margin-bottom: 6px;">Product:</div>
                 <div style="border: 1px solid #e1e3e5; border-radius: 8px; padding: 12px; display: flex; align-items: center;">
@@ -331,7 +330,6 @@
                                 <span style="font-size: 14px; font-weight: 600; color: #202223; min-width: 30px;">${starCounts[star]}</span>
                                 <button class="stats-view-star" data-star="${star}" style="background: none; border: 1px solid #c9cccf; border-radius: 6px; padding: 3px 10px; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 4px; color: #202223;">
                                     <svg viewBox="0 0 20 20" width="12" fill="currentColor"><path d="M10 3C5 3 1.73 7.11 1 10c.73 2.89 4 7 9 7s8.27-4.11 9-7c-.73-2.89-4-7-9-7zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"></path></svg>
-                                    View
                                 </button>
                             </div>
                         `}).join('')}
@@ -353,12 +351,12 @@
                                 <span style="font-size: 14px; font-weight: 600; color: #202223; min-width: 30px;">${starCounts[star]}</span>
                                 <button class="stats-view-star" data-star="${star}" style="background: none; border: 1px solid #c9cccf; border-radius: 6px; padding: 3px 10px; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 4px; color: #202223;">
                                     <svg viewBox="0 0 20 20" width="12" fill="currentColor"><path d="M10 3C5 3 1.73 7.11 1 10c.73 2.89 4 7 9 7s8.27-4.11 9-7c-.73-2.89-4-7-9-7zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"></path></svg>
-                                    View
                                 </button>
                             </div>
                         `}).join('')}
                     </div>
                 </div>
+            </div>
             </div>
 
             <div style="padding: 12px 20px 20px; display: flex; justify-content: flex-end;">
