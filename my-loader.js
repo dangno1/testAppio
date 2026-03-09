@@ -113,7 +113,7 @@
 
             <div id="appio-status-area" style="margin-top: 16px; display: none;">
                 <div style="background: #f4f6f8; border-radius: 8px; padding: 12px 16px; border: 1px solid #e1e3e5;">
-                    <p style="font-size: 14px; font-weight: 600; color: #008060; margin: 0;">Reviews Collected: <span id="review-count">0</span></p>
+                    <p style="font-size: 14px; font-weight: 600; color: #003366; margin: 0;">Reviews Collected: <span id="review-count">0</span></p>
                 </div>
                 <p id="appio-page-status" style="font-size: 12px; color: #6d7175; margin: 8px 0 0 0;"></p>
             </div>
@@ -294,7 +294,7 @@
         popup.innerHTML = `
             <div style="padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e1e3e5;">
                 <div style="display: flex; align-items: center; gap: 10px;">
-                    <span style="background: #008060; color: #fff; padding: 4px 12px; border-radius: 20px; font-size: 14px; font-weight: 600;">Total reviews collected: ${totalReviews}</span>
+                    <span style="background: #003366; color: #fff; padding: 4px 12px; border-radius: 20px; font-size: 14px; font-weight: 600;">Total reviews collected: ${totalReviews}</span>
                     <button class="stats-view-all-btn" style="background: none; border: 1px solid #c9cccf; border-radius: 6px; padding: 4px 12px; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 4px; color: #202223;">
                         <svg viewBox="0 0 20 20" width="14" fill="currentColor"><path d="M10 3C5 3 1.73 7.11 1 10c.73 2.89 4 7 9 7s8.27-4.11 9-7c-.73-2.89-4-7-9-7zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"></path></svg>
                         View
@@ -306,8 +306,8 @@
             </div>
 
             <div style="padding: 10px 20px 20px 20px;">
-                <div style="font-size: 13px; color: #202223; margin-bottom: 20px;">Product:</div>
-                <div style="border: 1px solid #e1e3e5; border-radius: 8px; padding: 12px; display: flex; align-items: center; gap: 12px;">
+                <div style="font-size: 13px; color: #202223; margin-bottom: 6px;">Product:</div>
+                <div style="border: 1px solid #e1e3e5; border-radius: 8px; padding: 12px; display: flex; align-items: center;">
                     ${productImg ? `<img src="${productImg}" style="width: 40px; height: 40px; border-radius: 6px; object-fit: cover;">` : `<div style="width:40px;height:40px;border-radius:6px;background:#f4f6f8;"></div>`}
                     <div>
                         <div style="font-size: 14px; font-weight: 500; color: #202223; max-width: 380px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${productTitle}</div>
@@ -322,10 +322,10 @@
                 starsHtml += `<svg viewBox="0 0 20 20" width="14" height="14" fill="${i <= star ? '#e6a817' : '#d9d9d9'}" style="display:inline-block;vertical-align:middle;"><path d="M10 1.3l2.388 6.722H18.8l-5.232 3.948 1.871 6.928L10 14.744l-5.438 4.154 1.87-6.928L1.2 8.022h6.412L10 1.3z"></path></svg>`;
             }
             return `
-                            <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="display: flex; align-items: center;">
                                 <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; min-width: 120px;">
                                     <input type="checkbox" class="star-checkbox" data-star="${star}" ${starCounts[star] > 0 ? 'checked' : ''}
-                                        style="width: 18px; height: 18px; accent-color: #008060; cursor: pointer;">
+                                        style="width: 18px; height: 18px; accent-color: #003366; cursor: pointer;">
                                     <span style="display:inline-flex;align-items:center;gap:1px;">${starsHtml}</span>
                                 </label>
                                 <span style="font-size: 14px; font-weight: 600; color: #202223; min-width: 30px;">${starCounts[star]}</span>
@@ -344,10 +344,10 @@
                     starsHtml += `<svg viewBox="0 0 20 20" width="14" height="14" fill="${i <= star ? '#e6a817' : '#d9d9d9'}" style="display:inline-block;vertical-align:middle;"><path d="M10 1.3l2.388 6.722H18.8l-5.232 3.948 1.871 6.928L10 14.744l-5.438 4.154 1.87-6.928L1.2 8.022h6.412L10 1.3z"></path></svg>`;
                 }
                 return `
-                            <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="display: flex; align-items: center;">
                                 <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; min-width: 120px;">
                                     <input type="checkbox" class="star-checkbox" data-star="${star}" ${starCounts[star] > 0 ? 'checked' : ''}
-                                        style="width: 18px; height: 18px; accent-color: #008060; cursor: pointer;">
+                                        style="width: 18px; height: 18px; accent-color: #003366; cursor: pointer;">
                                     <span style="display:inline-flex;align-items:center;gap:1px;">${starsHtml}</span>
                                 </label>
                                 <span style="font-size: 14px; font-weight: 600; color: #202223; min-width: 30px;">${starCounts[star]}</span>
@@ -362,7 +362,7 @@
             </div>
 
             <div style="padding: 12px 20px 20px; display: flex; justify-content: flex-end;">
-                <button id="stats-import-btn" style="padding: 10px 24px; background: #008060; color: #fff; border: none; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer; transition: background 0.15s;">
+                <button id="stats-import-btn" style="padding: 10px 24px; background: #003366; color: #fff; border: none; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer; transition: background 0.15s;">
                     Import ${totalReviews} reviews
                 </button>
             </div>
@@ -398,7 +398,7 @@
         const importBtn = document.getElementById('stats-import-btn');
         if (importBtn) {
             importBtn.addEventListener('mouseenter', () => importBtn.style.background = '#006e52');
-            importBtn.addEventListener('mouseleave', () => importBtn.style.background = '#008060');
+            importBtn.addEventListener('mouseleave', () => importBtn.style.background = '#003366');
             importBtn.addEventListener('click', () => {
                 const checkedStars = [];
                 document.querySelectorAll('.star-checkbox').forEach(cb => {
