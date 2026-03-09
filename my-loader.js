@@ -309,7 +309,7 @@
                     <div style="flex: 1;">
                         <div style="font-size: 14px; color: #202223; margin-bottom: 12px;">Product:</div>
                         <div style="border: 1px solid #e1e3e5; border-radius: 12px; padding: 16px; display: flex; flex-direction: column; align-items: center; gap: 16px; background: #fff;">
-                            ${productImg ? `<img src="${productImg}" style="width: 100%; max-width: 120px; height: auto; border-radius: 8px; object-fit: contain;">` : `<div style="width:120px;height:120px;border-radius:8px;background:#f4f6f8;"></div>`}
+                            ${productImg ? `<img src="${productImg}" style="width: 100%; max-width: 70px; height: auto; border-radius: 8px; object-fit: contain;">` : `<div style="width:70px;height:70px;border-radius:8px;background:#f4f6f8;"></div>`}
                             <div style="font-size: 14px; font-weight: 500; color: #212b36; line-height: 1.4; text-align: left; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${productTitle}</div>
                         </div>
                     </div>
@@ -326,11 +326,11 @@
                                 <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
                                     <div style="display: flex; align-items: center; gap: 8px;">
                                         <input type="checkbox" class="star-checkbox" data-star="${star}" ${starCounts[star] > 0 ? 'checked' : ''}
-                                            style="width: 18px; height: 18px; accent-color: #003366; cursor: pointer; border: 1px solid #c9cccf; border-radius: 4px;">
+                                            style="width: 18px; height: 18px; accent-color: #828282; cursor: pointer; border: 1px solid #c9cccf; border-radius: 4px;">
                                         <div style="display: flex; align-items: center; width: 75px;">${starsHtml}</div>
                                     </div>
                                     <div style="display: flex; align-items: center; gap: 8px; flex: 1; justify-content: flex-end;">
-                                        <span style="font-size: 14px; font-weight: 500; color: #212b36; min-width: 20px; text-align: right;">${starCounts[star]}</span>
+                                        <span style="font-size: 14px; font-weight: 500; color: #212b36; min-width: 20px;">${starCounts[star]}</span>
                                         <button class="stats-view-star" data-star="${star}" style="background: none; border: 1px solid #c9cccf; border-radius: 6px; padding: 4px 8px; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #5c5f62; transition: all 0.15s;">
                                             <svg viewBox="0 0 20 20" width="14" fill="currentColor"><path d="M10 3C5 3 1.73 7.11 1 10c.73 2.89 4 7 9 7s8.27-4.11 9-7c-.73-2.89-4-7-9-7zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"></path></svg>
                                         </button>
@@ -344,7 +344,7 @@
             </div>
 
             <div style="padding: 0 20px 24px; display: flex; justify-content: flex-end;">
-                <button id="stats-import-btn" style="padding: 12px 28px; background: #003366; color: #fff; border: none; border-radius: 8px; font-weight: 600; font-size: 15px; cursor: pointer; transition: background 0.15s; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <button id="stats-import-btn" style="padding: 8px 18px; background: #003366; color: #fff; border: none; border-radius: 8px; font-weight: 400; font-size: 13px; cursor: pointer; transition: background 0.15s; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
                     Import ${totalReviews} reviews
                 </button>
             </div>
