@@ -294,9 +294,9 @@
         popup.innerHTML = `
             <div style="padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e1e3e5;">
                 <div style="display: flex; align-items: center; gap: 10px;">
-                    <span style="background: #003366; color: #fff; padding: 4px 12px; border-radius: 20px; font-size: 14px; font-weight: 600;">Total reviews collected: ${totalReviews}</span>
-                    <button class="stats-view-all-btn" style="background: none; border: 1px solid #c9cccf; border-radius: 6px; padding: 4px 12px; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 4px; color: #202223;">
-                        <svg viewBox="0 0 20 20" width="14" fill="currentColor"><path d="M10 3C5 3 1.73 7.11 1 10c.73 2.89 4 7 9 7s8.27-4.11 9-7c-.73-2.89-4-7-9-7zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"></path></svg>
+                    <span style="background: #003366; color: #fff; padding: 6px 16px; border-radius: 20px; font-size: 14px; font-weight: 600; cursor: default;">Total reviews collected: ${totalReviews}</span>
+                    <button class="stats-view-all-btn" style="background: none; border: 1px solid #c9cccf; border-radius: 6px; padding: 6px 12px; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #202223;">
+                        <svg viewBox="0 0 20 20" width="16" fill="currentColor"><path d="M10 3C5 3 1.73 7.11 1 10c.73 2.89 4 7 9 7s8.27-4.11 9-7c-.73-2.89-4-7-9-7zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"></path></svg>
                     </button>
                 </div>
                 <button id="stats-close-btn" style="background:none; border:none; cursor:pointer; padding:4px; color:#5c5f62;">
@@ -304,46 +304,47 @@
                 </button>
             </div>
 
-            <div style="padding: 10px 20px 20px 20px;">
-                <div>
-                    <div style="font-size: 13px; color: #202223; margin-bottom: 6px;">Product:</div>
-                    <div style="border: 1px solid #e1e3e5; border-radius: 8px; padding: 12px; display: flex; align-items: center;">
-                        ${productImg ? `<img src="${productImg}" style="width: 40px; height: 40px; border-radius: 6px; object-fit: cover;">` : `<div style="width:40px;height:40px;border-radius:6px;background:#f4f6f8;"></div>`}
-                        <div>
-                            <div style="font-size: 14px; font-weight: 500; color: #202223; max-width: 380px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${productTitle}</div>
+            <div style="padding: 24px 20px;">
+                <div style="display: flex; gap: 32px;">
+                    <div style="flex: 1;">
+                        <div style="font-size: 14px; color: #202223; margin-bottom: 12px;">Product:</div>
+                        <div style="border: 1px solid #e1e3e5; border-radius: 12px; padding: 16px; display: flex; flex-direction: column; align-items: center; gap: 16px; background: #fff;">
+                            ${productImg ? `<img src="${productImg}" style="width: 100%; max-width: 120px; height: auto; border-radius: 8px; object-fit: contain;">` : `<div style="width:120px;height:120px;border-radius:8px;background:#f4f6f8;"></div>`}
+                            <div style="font-size: 14px; font-weight: 500; color: #212b36; line-height: 1.4; text-align: left; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${productTitle}</div>
+                        </div>
+                    </div>
+
+                    <div style="width: 220px;">
+                        <div style="font-size: 14px; color: #202223; margin-bottom: 12px;">Stats:</div>
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                            ${[5, 4, 3, 2, 1].map(star => {
+            let starsHtml = '';
+            for (let i = 1; i <= 5; i++) {
+                starsHtml += `<svg viewBox="0 0 20 20" width="14" height="14" fill="${i <= star ? '#e6a817' : '#d9d9d9'}" style="display:inline-block;vertical-align:middle;margin-right:1px;"><path d="M10 1.3l2.388 6.722H18.8l-5.232 3.948 1.871 6.928L10 14.744l-5.438 4.154 1.87-6.928L1.2 8.022h6.412L10 1.3z"></path></svg>`;
+            }
+            return `
+                                <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <input type="checkbox" class="star-checkbox" data-star="${star}" ${starCounts[star] > 0 ? 'checked' : ''}
+                                            style="width: 18px; height: 18px; accent-color: #003366; cursor: pointer; border: 1px solid #c9cccf; border-radius: 4px;">
+                                        <div style="display: flex; align-items: center; width: 75px;">${starsHtml}</div>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 8px; flex: 1; justify-content: flex-end;">
+                                        <span style="font-size: 14px; font-weight: 500; color: #212b36; min-width: 20px; text-align: right;">${starCounts[star]}</span>
+                                        <button class="stats-view-star" data-star="${star}" style="background: none; border: 1px solid #c9cccf; border-radius: 6px; padding: 4px 8px; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #5c5f62; transition: all 0.15s;">
+                                            <svg viewBox="0 0 20 20" width="14" fill="currentColor"><path d="M10 3C5 3 1.73 7.11 1 10c.73 2.89 4 7 9 7s8.27-4.11 9-7c-.73-2.89-4-7-9-7zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"></path></svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                `;
+        }).join('')}
                         </div>
                     </div>
                 </div>
-                <div>
-                <div style="font-size: 13px; color: #202223; margin: 5px 0px;">Stats:</div>
-                <div id="stats-rows" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0 24px;">
-                    <div style="display: flex; flex-direction: column; gap: 8px;">
-                        ${[5, 4, 3, 2, 1].map(star => {
-            let starsHtml = '';
-            for (let i = 1; i <= 5; i++) {
-                starsHtml += `<svg viewBox="0 0 20 20" width="14" height="14" fill="${i <= star ? '#e6a817' : '#d9d9d9'}" style="display:inline-block;vertical-align:middle;"><path d="M10 1.3l2.388 6.722H18.8l-5.232 3.948 1.871 6.928L10 14.744l-5.438 4.154 1.87-6.928L1.2 8.022h6.412L10 1.3z"></path></svg>`;
-            }
-            return `
-                            <div style="display: flex; align-items: center;">
-                                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; min-width: 120px;">
-                                    <input type="checkbox" class="star-checkbox" data-star="${star}" ${starCounts[star] > 0 ? 'checked' : ''}
-                                        style="width: 18px; height: 18px; accent-color: #003366; cursor: pointer;">
-                                    <span style="display:inline-flex;align-items:center;gap:1px;">${starsHtml}</span>
-                                </label>
-                                <span style="font-size: 14px; font-weight: 600; color: #202223; min-width: 30px;">${starCounts[star]}</span>
-                                <button class="stats-view-star" data-star="${star}" style="background: none; border: 1px solid #c9cccf; border-radius: 6px; padding: 3px 10px; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 4px; color: #202223;">
-                                    <svg viewBox="0 0 20 20" width="12" fill="currentColor"><path d="M10 3C5 3 1.73 7.11 1 10c.73 2.89 4 7 9 7s8.27-4.11 9-7c-.73-2.89-4-7-9-7zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"></path></svg>
-                                </button>
-                            </div>
-                        `}).join('')}
-
-                    </div>
-                </div>
-                </div>
             </div>
 
-            <div style="padding: 12px 20px 20px; display: flex; justify-content: flex-end;">
-                <button id="stats-import-btn" style="padding: 10px 24px; background: #003366; color: #fff; border: none; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer; transition: background 0.15s;">
+            <div style="padding: 0 20px 24px; display: flex; justify-content: flex-end;">
+                <button id="stats-import-btn" style="padding: 12px 28px; background: #003366; color: #fff; border: none; border-radius: 8px; font-weight: 600; font-size: 15px; cursor: pointer; transition: background 0.15s; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
                     Import ${totalReviews} reviews
                 </button>
             </div>
