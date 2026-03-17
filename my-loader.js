@@ -1,5 +1,4 @@
 (function () {
-    // Prevent duplicate popups
     if (document.getElementById('appio-overlay')) return;
     const isReviewPage = window.location.href.includes("product-reviews");
     const isDetailPage = window.location.href.includes("/dp/") || window.location.href.includes("/gp/product/");
@@ -7,7 +6,6 @@
     const amazonAny = /https:\/\/www\.amazon\.(?:ca|cn|eg|de|fr|in|it|nl|pl|sa|sg|es|se|ae|com|com\.au|com\.be|com\.br|com\.mx|com\.tr|co\.jp|co\.uk)/;
     const amazonSupported = /https:\/\/www\.amazon\.(?:ca|cn|eg|de|fr|it|nl|pl|sa|sg|es|se|ae|com|com\.au|com\.be|com\.br|com\.mx|com\.tr|co\.jp|co\.uk)/;
 
-    // Data Storage
     const allReviews = [];
     let reviewSummary = { totalRatings: "", average: "", count: [] };
     const token = window.APPIO_IMPORT_TOKEN || "";
@@ -121,8 +119,6 @@
         return;
     }
 
-    // ===== REVIEW PAGE: Show "Prepare to collect reviews" popup =====
-
     if (!window.location.href.includes("sortBy=recent")) {
         const sortBtn = document.querySelector("#a-autoid-2-announce");
         if (sortBtn) {
@@ -143,7 +139,6 @@
     let allProducts = [];
     let productsLoaded = false;
     let productsLoading = false;
-    // Gom payload dữ liệu chuẩn để dùng chung cho tất cả log/import.
     function buildData(review) {
         return {
             shop,
@@ -170,7 +165,7 @@
                     <path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm9.707 4.293-4.82-4.82A5.968 5.968 0 0 0 14 8 6 6 0 0 0 2 8a6 6 0 0 0 6 6 5.968 5.968 0 0 0 3.473-1.113l4.82 4.82a.997.997 0 0 0 1.414 0 .999.999 0 0 0 0-1.414z"></path>
                 </svg>
                 <input id="appio-product-input" type="text" placeholder="Search product" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
-                    style="width: 100%; padding: 10px 12px 10px 12px; border: 1px solid #c9cccf; border-radius: 8px; font-size: 14px; color: #202223; outline: none; box-sizing: border-box; transition: border-color 0.15s;">
+                    style="width: 100%; padding: 10px; border: 1px solid #c9cccf; border-radius: 8px; font-size: 14px; color: #202223; outline: none; box-sizing: border-box; transition: border-color 0.15s;">
                 <div id="appio-product-results" style="position: absolute; top: 100%; left: 0; right: 0; margin-top: 6px; background: #fff; border: 1px solid #e1e3e5; border-radius: 10px; max-height: 260px; overflow-y: auto; box-shadow: 0 12px 24px rgba(0,0,0,0.12); display: none; z-index: 9999;"></div>
             </div>
 
@@ -190,26 +185,55 @@
     overlay.appendChild(popup);
     document.body.appendChild(overlay);
 
-    const closeBtn = document.getElementById("appio-close-btn");
-    const productInput = document.getElementById("appio-product-input");
-    const startBtn = document.getElementById("appio-start-btn");
-    const statusArea = document.getElementById("appio-status-area");
-    const productResults = document.getElementById("appio-product-results");
+    let closeBtn = document.getElementById("appio-close-btn");
+    let productInput = document.getElementById("appio-product-input");
+    let startBtn = document.getElementById("appio-start-btn");
+    let statusArea = document.getElementById("appio-status-area");
+    let productResults = document.getElementById("appio-product-results");
+    let isChangeProductMode = false;
 
     closeBtn.onclick = () => overlay.remove();
 
-    // Focus styling for input
-    productInput.addEventListener("focus", () => {
-        productInput.style.borderColor = "#005bd3";
-        productInput.style.boxShadow = "0 0 0 2px rgba(0, 91, 211, 0.2)";
-    });
-    productInput.addEventListener("blur", () => {
-        productInput.style.borderColor = "#c9cccf";
-        productInput.style.boxShadow = "none";
-    });
+    function bindInputEvents() {
+        if (!productInput) return;
+        productInput.addEventListener("focus", () => {
+            productInput.style.borderColor = "#005bd3";
+            productInput.style.boxShadow = "0 0 0 2px rgba(0, 91, 211, 0.2)";
+            if (productsLoaded) {
+                const query = productInput.value.trim();
+                const sortedProducts = sortProductsByQuery(allProducts, query);
+                renderProductResults(sortedProducts);
+            }
+        });
+        productInput.addEventListener("blur", () => {
+            productInput.style.borderColor = "#c9cccf";
+            productInput.style.boxShadow = "none";
+        });
 
-    // Bật/tắt nút Start theo trạng thái đã chọn sản phẩm hợp lệ.
+        productInput.addEventListener("input", () => {
+            const query = productInput.value.trim();
+            selectedProduct = query;
+            selectedProductId = "";
+            selectedProductImage = "";
+            setStartButtonState(false);
+            if (!productResults) return;
+            if (searchTimeout) clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                searchProducts(query);
+            }, 400);
+        });
+
+        productInput.addEventListener("click", () => {
+            if (productsLoading) return;
+            const query = productInput.value.trim();
+            searchProducts(query);
+        });
+    }
+
+    bindInputEvents();
+
     function setStartButtonState(enabled) {
+        if (!startBtn) return;
         startBtn.disabled = !enabled;
         if (enabled) {
             startBtn.style.background = "#003366";
@@ -222,7 +246,6 @@
         }
     }
 
-    // Render danh sách sản phẩm tìm kiếm và xử lý chọn sản phẩm.
     function renderProductResults(products, message) {
         if (!productResults) return;
         if (message) {
@@ -251,9 +274,16 @@
                 selectedProductId = el.getAttribute("data-id") || "";
                 selectedProduct = el.getAttribute("data-title") || "";
                 selectedProductImage = el.getAttribute("data-image") || "";
-                productInput.value = selectedProduct;
-                productResults.style.display = "none";
-                setStartButtonState(!!selectedProductId);
+
+                if (isChangeProductMode) {
+                    productResults.style.display = "none";
+                    showStatsPopup();
+                    isChangeProductMode = false;
+                } else {
+                    productInput.value = selectedProduct;
+                    productResults.style.display = "none";
+                    setStartButtonState(!!selectedProductId);
+                }
             });
         });
     }
@@ -292,39 +322,12 @@
         }
     }
 
-    productInput.addEventListener("input", () => {
-        const query = productInput.value.trim();
-        selectedProduct = query;
-        selectedProductId = "";
-        selectedProductImage = "";
-        setStartButtonState(false);
-        if (!productResults) return;
-        if (searchTimeout) clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => {
-            searchProducts(query);
-        }, 400);
-    });
-
-    productInput.addEventListener("focus", () => {
-        if (!productsLoaded) return;
-        const query = productInput.value.trim();
-        const sortedProducts = sortProductsByQuery(allProducts, query);
-        renderProductResults(sortedProducts);
-    });
-
-    productInput.addEventListener("click", () => {
-        if (productsLoading) return;
-        const query = productInput.value.trim();
-        searchProducts(query);
-    });
-
     document.addEventListener("click", (e) => {
         if (!productResults) return;
         if (e.target === productInput || productResults.contains(e.target)) return;
         productResults.style.display = "none";
     });
 
-    // Hover effect for Start button
     startBtn.addEventListener("mouseenter", () => {
         if (!startBtn.disabled) startBtn.style.background = "#003366";
     });
@@ -332,21 +335,15 @@
         if (!startBtn.disabled) startBtn.style.background = "#003366";
     });
 
-    // Lấy thông tin tổng quan review: tổng đánh giá, điểm trung bình, % theo sao.
     function scrapeReviewSummary() {
-        // Total ratings (e.g. "4,800" or "4 800" or "4.800" global ratings)
         const totalEl = document.querySelector('[data-hook="total-review-count"]');
         const totalText = totalEl?.innerText?.trim() || "";
         const totalMatch = totalText.match(/([\d\s.,\u00A0]+)/);
         const totalRatings = totalMatch ? totalMatch[1].replace(/[\s.,\u00A0]/g, '') : "0";
-
-        // Average rating (e.g. "4.5 out of 5" or "4,5 out of 5")
         const avgEl = document.querySelector('[data-hook="rating-out-of-text"]');
         const avgText = avgEl?.innerText?.trim() || "";
         const avgMatch = avgText.match(/([\d][,.][\d])/);
         const average = avgMatch ? avgMatch[1].replace(',', '.') : "0";
-
-        // Star percentage breakdown (5-star to 1-star)
         const starPercentMap = { 1: "0%", 2: "0%", 3: "0%", 4: "0%", 5: "0%" };
         const histogramRows = document.querySelectorAll('#histogramTable tr, #histogramTable li.a-align-center');
         histogramRows.forEach(row => {
@@ -365,8 +362,6 @@
         reviewSummary = { totalRatings, average, count };
     }
 
-    // ===== Scrape logic =====
-    // Quét từng review trên trang hiện tại và thêm vào allReviews nếu chưa tồn tại.
     function scrapeReviews() {
         scrapeReviewSummary();
         const reviewElements = document.querySelectorAll('[data-hook="review"]');
@@ -424,7 +419,6 @@
         if (countEl) countEl.textContent = allReviews.length;
     }
 
-    // Cuộn mượt tới phần tử để hỗ trợ thao tác phân trang tự động.
     function scrollToElement(selector) {
         const el = document.querySelector(selector);
         if (el) {
@@ -432,15 +426,11 @@
         }
         return el;
     }
-    // Tạm dừng theo mili giây để đợi trang/DOM cập nhật.
     function wait(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    // ===== Show Stats Popup after collection =====
-    // Hiển thị popup thống kê sau khi thu thập và cung cấp thao tác import/preview.
     function showStatsPopup() {
-        // Calculate stats
         const starCounts = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
         let photoCount = 0;
         allReviews.forEach(r => {
@@ -450,7 +440,6 @@
         });
         const totalReviews = allReviews.length;
 
-        // Try to get product info from Amazon page
         const productTitle = document.querySelector('.product-info-title')?.innerText.trim()
             || selectedProduct || 'Unknown Product';
         const productImg = selectedProductImage
@@ -471,10 +460,10 @@
             <div style="padding: 20px 20px;">
                 <div style="display: flex; gap: 20px; flex-direction: column;">
                     <div style="flex: 1;">
-                        <div style="border: 1px solid #e1e3e5; border-radius: 12px; padding: 5px; display: flex; align-items: center; gap: 16px; background: #fff;">
+                        <div id="appio-selected-product-container" style="border: 1px solid #e1e3e5; border-radius: 12px; padding: 5px; display: flex; align-items: center; gap: 16px; background: #fff;">
                             ${productImg ? `<img src="${productImg}" style="width: 100%; max-width: 40px; height: auto; border-radius: 8px; object-fit: contain;">` : `<div style="width:70px;height:70px;border-radius:8px;background:#f4f6f8;"></div>`}
                             <div style="font-size: 12px; color: #212b36; line-height: 1.4; text-align: left; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${productTitle}</div>
-                            <div style="cursor: pointer;">
+                            <div id="appio-change-product-btn" style="cursor: pointer;" title="Change product">
                             <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
                                 width="25px" height="25px" viewBox="0 0 348.000000 348.000000"
                                 preserveAspectRatio="xMidYMid meet" style="flex-shrink: 0; margin-left: auto;">
@@ -554,18 +543,55 @@
                 </div>
             </div>
 
-            <div style="padding: 0 20px 24px; display: flex; justify-content: flex-end;">
+            <div style="padding: 0 20px 24px; display: flex; justify-content: space-between; align-items: center;">
+                <div id="stats-import-msg" style="font-size: 14px; font-weight: 500;"></div>
                 <button id="stats-import-btn" style="padding: 8px 18px; background: #003366; color: #fff; border: none; border-radius: 8px; font-weight: 400; font-size: 13px; cursor: pointer; transition: background 0.15s; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
                     Import ${totalReviews} reviews
                 </button>
             </div>
         `;
 
-        // Close button
         document.getElementById('stats-close-btn').onclick = () => overlay.remove();
 
-        // Update import count when checkboxes change
-        // Cập nhật số lượng review sẽ import dựa trên bộ lọc sao được chọn.
+        document.getElementById('appio-change-product-btn').addEventListener('click', () => {
+            const container = document.getElementById('appio-selected-product-container');
+            if (!container) return;
+
+            isChangeProductMode = true;
+            container.innerHTML = `
+                 <div style="position: relative; width: 100%;">
+                    <svg viewBox="0 0 20 20" width="16" fill="#8c9196" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); pointer-events: none;">
+                        <path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm9.707 4.293-4.82-4.82A5.968 5.968 0 0 0 14 8 6 6 0 0 0 2 8a6 6 0 0 0 6 6 5.968 5.968 0 0 0 3.473-1.113l4.82 4.82a.997.997 0 0 0 1.414 0 .999.999 0 0 0 0-1.414z"></path>
+                    </svg>
+                    <input id="appio-product-input-inline" type="text" placeholder="Search product" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+                        style="width: 100%; padding: 10px; border: none; border-radius: 8px; font-size: 14px; color: #202223; outline: none; box-sizing: border-box; transition: border-color 0.15s;">
+                    <div id="appio-product-results-inline" style="position: absolute; top: 100%; left: 0; right: 0; margin-top: 6px; background: #fff; border: 1px solid #e1e3e5; border-radius: 10px; max-height: 260px; overflow-y: auto; box-shadow: 0 12px 24px rgba(0,0,0,0.12); display: none; z-index: 9999;"></div>
+                 </div>
+             `;
+
+            productInput = document.getElementById('appio-product-input-inline');
+            productResults = document.getElementById('appio-product-results-inline');
+
+            bindInputEvents();
+            productInput.focus();
+
+            const handleClickOutside = (e) => {
+                if (!isChangeProductMode) {
+                    document.removeEventListener('click', handleClickOutside);
+                    return;
+                }
+                const container = document.getElementById('appio-selected-product-container');
+                if (!container || !container.contains(e.target)) {
+                    isChangeProductMode = false;
+                    showStatsPopup();
+                    document.removeEventListener('click', handleClickOutside);
+                }
+            };
+            setTimeout(() => {
+                document.addEventListener('click', handleClickOutside);
+            }, 0);
+        });
+
         function updateImportCount() {
             const checkedStars = [];
             document.querySelectorAll('.star-checkbox').forEach(cb => {
@@ -598,11 +624,14 @@
             cb.addEventListener('change', updateImportCount);
         });
 
-        // Import button hover
         const importBtn = document.getElementById('stats-import-btn');
         if (importBtn) {
-            importBtn.addEventListener('mouseenter', () => importBtn.style.background = '#828282');
-            importBtn.addEventListener('mouseleave', () => importBtn.style.background = '#003366');
+            importBtn.addEventListener('mouseenter', () => {
+                if (!importBtn.disabled) importBtn.style.background = '#828282';
+            });
+            importBtn.addEventListener('mouseleave', () => {
+                if (!importBtn.disabled) importBtn.style.background = '#003366';
+            });
             importBtn.addEventListener('click', () => {
                 const checkedStars = [];
                 document.querySelectorAll('.star-checkbox').forEach(cb => {
@@ -615,18 +644,59 @@
                 });
 
                 const data = buildData(filteredReviews);
-                console.log('IMPORT DATA:', data);
-
                 importBtn.textContent = 'Importing...';
                 importBtn.disabled = true;
                 importBtn.style.background = '#e4e5e7';
                 importBtn.style.color = '#8c9196';
                 importBtn.style.cursor = 'not-allowed';
+
+                const API_URL = 'https://jsonplaceholder.typicode.com/posts';
+
+                fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(result => {
+                        console.log('Import Success:', result);
+                        const msgEl = document.getElementById('stats-import-msg');
+                        if (msgEl) {
+                            msgEl.textContent = 'Import Success!';
+                            msgEl.style.color = '#4CAF50';
+                            msgEl.style.display = 'block';
+                        }
+
+                        importBtn.textContent = 'Imported';
+                        importBtn.style.background = '#e4e5e7';
+                        importBtn.style.color = '#8c9196';
+                        importBtn.style.cursor = 'not-allowed';
+                        importBtn.disabled = true;
+                    })
+                    .catch(error => {
+                        console.error('Import Error:', error);
+                        importBtn.textContent = 'Import Failed';
+                        importBtn.style.background = '#f44336';
+                        importBtn.style.color = '#fff';
+
+                        setTimeout(() => {
+                            importBtn.disabled = false;
+                            importBtn.textContent = 'Import reviews';
+                            importBtn.style.background = '#003366';
+                            importBtn.style.color = '#fff';
+                            importBtn.style.cursor = 'pointer';
+                        }, 3000);
+                    });
             });
         }
 
-        // Helper: render star icons
-        // Render dãy icon sao theo rating của từng review.
         function renderStars(rating) {
             const r = Math.round(rating);
             let html = '';
@@ -636,8 +706,6 @@
             return html;
         }
 
-        // Show review preview panel
-        // Hiển thị màn hình preview review theo bộ lọc (all/1-5 sao).
         function showReviewPreview(reviews, label) {
             popup.style.width = '620px';
             popup.innerHTML = `
@@ -684,7 +752,6 @@
             };
             document.getElementById('preview-close-btn').onclick = () => overlay.remove();
 
-            // Delete review buttons
             document.querySelectorAll('.review-delete-btn').forEach(btn => {
                 btn.addEventListener('mouseenter', () => { btn.style.color = '#d72c0d'; btn.style.background = '#fff4f4'; });
                 btn.addEventListener('mouseleave', () => { btn.style.color = '#8c9196'; btn.style.background = 'none'; });
@@ -693,7 +760,6 @@
                     const idx = allReviews.findIndex(r => (r.referrenceId || r.hashId) === reviewId);
                     if (idx !== -1) {
                         allReviews.splice(idx, 1);
-                        // Re-filter and re-render preview
                         const currentReviews = reviews.filter(r => allReviews.some(a => (a.referrenceId || a.hashId) === (r.referrenceId || r.hashId)));
                         showReviewPreview(currentReviews, label);
                     }
@@ -711,7 +777,6 @@
             });
         }
 
-        // View buttons - show preview panel
         document.querySelectorAll('.stats-view-star').forEach(btn => {
             btn.addEventListener('click', () => {
                 const star = parseInt(btn.dataset.star);
@@ -728,26 +793,22 @@
         }
     }
 
-    // ===== START button click → begin scraping =====
     startBtn.addEventListener("click", async () => {
         if (startBtn.disabled) return;
 
-        // Hide button after starting
         startBtn.style.display = "none";
         productInput.disabled = true;
         productInput.style.background = "#f6f6f7";
 
 
-        // Show status area
         statusArea.style.display = "block";
 
         let clickCount = 0;
         const maxClicks = 10;
         let randomTime = Math.floor(Math.random() * (5000 - 1000 + 1)) + 1000;
 
-        // Luồng chính: quét review theo từng trang cho tới hết trang hoặc đạt giới hạn.
         async function processPage() {
-            if (!document.getElementById('appio-overlay')) return; // Dừng nếu đã đóng popup
+            if (!document.getElementById('appio-overlay')) return;
             const pageStatus = document.getElementById("appio-page-status");
 
             scrapeReviews();
@@ -773,8 +834,6 @@
                 scrapeReviews();
                 if (pageStatus) pageStatus.textContent = "All pages collected!";
                 startBtn.textContent = "Done";
-                const data = buildData(allReviews);
-                console.log("FINAL DATA OBJECT:", data);
                 showStatsPopup();
                 return;
             }
@@ -791,8 +850,6 @@
             } else {
                 if (pageStatus) pageStatus.textContent = `Reached max ${maxClicks} pages.`;
                 startBtn.textContent = "Done";
-                const data = buildData(allReviews);
-                console.log("FINAL DATA OBJECT:", data);
                 showStatsPopup();
             }
         }
