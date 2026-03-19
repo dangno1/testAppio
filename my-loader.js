@@ -313,6 +313,7 @@
             const res = await fetch(url);
             const data = await res.json();
             allProducts = data?.data?.products || [];
+            productsLoaded = true;
             const sortedProducts = sortProductsByQuery(allProducts, query);
             renderProductResults(sortedProducts);
         } catch (e) {
@@ -440,8 +441,8 @@
         });
         const totalReviews = allReviews.length;
 
-        const productTitle = document.querySelector('.product-info-title')?.innerText.trim()
-            || selectedProduct || 'Unknown Product';
+        const productTitle = selectedProduct || document.querySelector('.product-info-title')?.innerText.trim()
+            || 'Unknown Product';
         const productImg = selectedProductImage
             || document.querySelector('#cm_cr-product_info img')?.src
             || document.querySelector('#landingImage')?.src
@@ -460,46 +461,35 @@
             <div style="padding: 20px 20px;">
                 <div style="display: flex; gap: 20px; flex-direction: column;">
                     <div style="flex: 1;">
-                        <div id="appio-selected-product-container" style="border: 1px solid #e1e3e5; border-radius: 12px; padding: 5px; display: flex; align-items: center; gap: 16px; background: #fff;">
-                            ${productImg ? `<img src="${productImg}" style="width: 100%; max-width: 40px; height: auto; border-radius: 8px; object-fit: contain;">` : `<div style="width:70px;height:70px;border-radius:8px;background:#f4f6f8;"></div>`}
-                            <div style="font-size: 12px; color: #212b36; line-height: 1.4; text-align: left; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${productTitle}</div>
+                        <div id="appio-selected-product-container" style="border: 1px solid #e1e3e5; border-radius: 12px; padding: 5px; display: flex; align-items: center; gap: 16px; background: #fff;justify-content: space-between;">
+                            <div style="display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0;">
+                                ${productImg ? `<img src="${productImg}" style="width: 100%; max-width: 40px; height: auto; border-radius: 8px; object-fit: contain;">` : `<div style="width:70px;height:70px;border-radius:8px;background:#f4f6f8;"></div>`}
+                                <div style="font-size: 12px; color: #212b36; line-height: 1.4; text-align: left; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${productTitle}</div>
+                            </div>
                             <div id="appio-change-product-btn" style="cursor: pointer;" title="Change product">
-                            <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
-                                width="25px" height="25px" viewBox="0 0 348.000000 348.000000"
-                                preserveAspectRatio="xMidYMid meet" style="flex-shrink: 0; margin-left: auto;">
+                                <svg id="Objects" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2109.82 2109.82" style="width: 23px; height: 22px;">
+                                    <defs>
+                                        <style>
+                                            .cls-1 {
+                                                fill: #fff;
+                                            }
 
-                                <g transform="translate(0.000000,348.000000) scale(0.100000,-0.100000)"
-                                fill="#000000" stroke="none">
-                                <path d="M1392 3473 c-34 -13 -42 -59 -42 -236 l0 -174 -142 -6 c-170 -7 -284
-                                -34 -425 -102 -451 -219 -683 -728 -552 -1215 29 -111 117 -282 192 -375 74
-                                -91 185 -188 284 -246 79 -45 105 -48 138 -14 35 34 32 71 -11 130 -75 103
-                                -124 252 -124 373 1 148 73 316 185 427 108 109 279 184 418 185 l37 0 0 -184
-                                c0 -102 4 -196 10 -210 12 -32 50 -51 83 -42 13 3 202 182 431 408 358 354
-                                407 407 406 433 0 26 -56 86 -413 442 -419 420 -426 426 -475 406z m465 -598
-                                l244 -240 -301 -300 -300 -300 0 146 c0 192 8 184 -184 183 -125 0 -150 -3
-                                -221 -27 -219 -73 -397 -238 -482 -447 -41 -102 -55 -192 -50 -315 2 -60 8
-                                -119 12 -130 14 -36 -52 48 -99 126 -85 141 -135 345 -123 499 31 398 287 706
-                                681 818 48 13 102 17 249 17 239 0 227 -10 227 178 l0 131 52 -49 c29 -28 162
-                                -158 295 -290z"/>
-                                <path d="M2631 2364 c-30 -38 -26 -64 15 -125 146 -211 161 -455 41 -669 -47
-                                -85 -168 -198 -257 -242 -86 -42 -182 -68 -257 -68 l-53 0 -2 201 -3 202 -27
-                                20 c-17 13 -34 18 -50 14 -12 -4 -207 -188 -431 -409 -382 -378 -408 -405
-                                -408 -438 0 -33 25 -59 408 -438 224 -221 418 -405 431 -408 32 -9 70 11 82
-                                42 6 14 10 103 10 198 l0 173 143 6 c109 4 164 11 237 32 247 68 466 225 604
-                                435 230 348 228 807 -4 1151 -84 123 -246 271 -367 333 -48 24 -88 21 -112
-                                -10z m366 -442 c98 -157 139 -316 130 -506 -7 -150 -23 -211 -92 -351 -113
-                                -227 -300 -384 -550 -462 -85 -26 -101 -27 -283 -28 -180 0 -195 -1 -208 -19
-                                -10 -15 -14 -55 -14 -160 l0 -141 -297 297 -298 298 290 290 c159 159 293 290
-                                297 290 4 0 9 -64 10 -141 3 -139 4 -142 28 -161 35 -26 148 -34 247 -18 167
-                                26 303 92 419 203 173 164 251 353 242 586 -3 58 -8 115 -13 126 -17 41 46
-                                -29 92 -103z"/>
-                                </g>
-                            </svg>
+                                            .cls-2 {
+                                                fill: #003366;
+                                            }
+                                        </style>
+                                    </defs>
+                                    <circle class="cls-2" cx="1054.91" cy="1054.91" r="1054.91" />
+                                    <path class="cls-1"
+                                        d="M1596.42,740.02l-412.87,309.01c-32.36,24.22-78.49,1.13-78.49-39.29,0,0,0-107.29,0-107.29-139.35-9.83-254.86,30.21-359.36,98.94-97.13,63.89-166.49,149.06-197.64,191.61-8.63,11.79-26.9,8.86-31.51-5-14.75-44.27-22.81-103.32-22.81-146.05,0-221.24,101.75-356.3,263.95-453.84,90.95-54.69,195.12-91.26,347.37-99.32v-97.08c0-40.42,46.13-63.51,78.49-39.29l412.87,309.02c26.23,19.63,26.23,58.96,0,78.59Z" />
+                                    <path class="cls-1"
+                                        d="M513.4,1369.79l412.87-309.01c32.36-24.22,78.49-1.13,78.49,39.29,0,0,0,107.29,0,107.29,139.35,9.83,254.86-30.21,359.36-98.94,97.13-63.89,166.49-149.06,197.64-191.61,8.63-11.79,26.9-8.86,31.51,5,14.75,44.27,22.81,103.32,22.81,146.05,0,221.24-101.75,356.3-263.95,453.84-90.95,54.69-195.12,91.26-347.37,99.32v97.08c0,40.42-46.13,63.51-78.49,39.29l-412.87-309.02c-26.23-19.63-26.23-58.96,0-78.59Z" />
+                                </svg>
                             </div>
                         </div>
                     </div>
 
-                    <div style="width: 220px;">
+                    <div style="width: 235px; padding-left: 15px;">
                         <div style="display: flex; flex-direction: column; gap: 10px;">
                             ${[5, 4, 3, 2, 1].map(star => {
             let starsHtml = '';
@@ -544,7 +534,7 @@
             </div>
 
             <div style="padding: 0 20px 24px; display: flex; justify-content: space-between; align-items: center;">
-                <div id="stats-import-msg" style="font-size: 14px; font-weight: 500;"></div>
+                <div id="stats-import-msg" style="font-size: 14px; font-weight: 500; padding-left: 15px;"></div>
                 <button id="stats-import-btn" style="padding: 8px 18px; background: #003366; color: #fff; border: none; border-radius: 8px; font-weight: 400; font-size: 13px; cursor: pointer; transition: background 0.15s; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
                     Import ${totalReviews} reviews
                 </button>
@@ -574,6 +564,7 @@
 
             bindInputEvents();
             productInput.focus();
+            searchProducts("");
 
             const handleClickOutside = (e) => {
                 if (!isChangeProductMode) {
@@ -667,6 +658,8 @@
                     })
                     .then(result => {
                         console.log('Import Success:', result);
+
+                        // Show success message
                         const msgEl = document.getElementById('stats-import-msg');
                         if (msgEl) {
                             msgEl.textContent = 'Import Success!';
@@ -853,7 +846,6 @@
                 showStatsPopup();
             }
         }
-
         processPage();
     });
 
