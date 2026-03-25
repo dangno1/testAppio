@@ -620,7 +620,7 @@
         async function processPage() {
             if (!isOverlayAlive()) return;
             const pageStatus = document.getElementById("appio-page-status");
-            const showMoreBtn = document.querySelector('#a-autoid-18-announce, [data-hook="show-more-button"], .cm-cr-show-more a');
+            const showMoreBtn = document.querySelector('[data-hook="show-more-button"]');
             const nextLi = document.querySelector('.a-last');
             const nextBtn = nextLi ? nextLi.querySelector('a') : null;
 
